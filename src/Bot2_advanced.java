@@ -66,7 +66,8 @@ public class Bot2_advanced {
                 if (tmp3==4) tmpScore++;
                 val = (tmp3==4) ? 1000 : (tmp3>4 ? 0 : tmp3);
                 if (i>=dims) {
-                    tmp3 += copiedSquares[srows[0][i]+1][scols[0][i]]+1;
+                    tmp3 = copiedSquares[srows[0][i]+1][scols[0][i]]+1;
+                    copiedSquares[srows[0][i]+1][scols[0][i]]++;
                     if (tmp3==4) tmpScore++;
                     val += ((tmp3==4)? 1000 : (tmp3>4 ? 0 : tmp3));
                 }
@@ -85,20 +86,22 @@ public class Bot2_advanced {
                 }
                 else newTurn = !turn;
                 minmax(copiedSquares, copiedHScores, copiedVScores, srows, scols, copiedHbtnColors, copiedVbtnColors, newBotScore, newOppScore, newTurn, depth-1);
-                copiedSquares[srows[0][i]][scols[0][i]]--;
+                copiedSquares[srows[0][i]][scols[0][i]] = squares[srows[0][i]][scols[0][i]];
+                copiedSquares[srows[0][i]+1][scols[0][i]] = squares[srows[0][i]+1][scols[0][i]];
                 copiedHScores[i] = oldHScores[i];
                 copiedHbtnColors[i] = oldHbtnColors[i];
                 newTurn = turn;
                 newBotScore = botScore;
                 newOppScore = oppScore;
             }
-            tmp3 = copiedSquares[srows[0][i]][scols[0][i]] + 1;
+            tmp3 = copiedSquares[srows[1][i]][scols[1][i]] + 1;
             if (oldVbtnColors[i] == 'x') {
                 int tmpScore = 0;
                 if (tmp3==4) tmpScore++;
                 val = (tmp3==4) ? 1000 : (tmp3>4 ? 0 : tmp3);
                 if (i%(dims+1)>0) {
                     tmp3 = copiedSquares[srows[1][i]][scols[1][i]+1]+1;
+                    copiedSquares[srows[1][i]][scols[1][i]+1]++;
                     if (tmp3==4) tmpScore++;
                     val += ((tmp3==4)? 1000 : (tmp3>4 ? 0 : tmp3));
                 }
@@ -110,14 +113,15 @@ public class Bot2_advanced {
                     copiedVScores[i] -= val; 
                     copiedVbtnColors[i] = 'g';
                 }
-                copiedSquares[srows[1][i]][scols[1][i]+1]++;
+                copiedSquares[srows[1][i]][scols[1][i]]++;
                 if (tmp3==4) {
                     if (turn) newBotScore += tmpScore;
                     else newOppScore += tmpScore;
                 }
                 else newTurn = !turn;
                 minmax(copiedSquares, copiedHScores, copiedVScores, srows, scols, copiedHbtnColors, copiedVbtnColors, newBotScore, newOppScore, newTurn, depth-1);
-                copiedSquares[srows[1][i]][scols[1][i]+1]--;
+                copiedSquares[srows[1][i]][scols[1][i]] = squares[srows[1][i]][scols[1][i]];
+                copiedSquares[srows[1][i]][scols[1][i]+1] = squares[srows[1][i]][scols[1][i]+1];
                 copiedVScores[i] = oldVScores[i];
                 copiedVbtnColors[i] = oldVbtnColors[i];
                 newTurn = turn;
