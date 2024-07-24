@@ -2,7 +2,7 @@ public class Bot2_advanced {
     
     int dims, target, current;
     int[] hScores, vScores, res;
-    int mx;
+    int maxDepth;
     
     public Bot2_advanced(int n) {
         dims = n;
@@ -10,6 +10,7 @@ public class Bot2_advanced {
         vScores = new int[n*(n+1)];
         target = (n*n)/2 + 1;
         res = new int[2];
+        maxDepth = 5;
     }
 
     public int[] move(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors, char[] vbtnColors, int botScore, int oppScore) {
@@ -19,118 +20,136 @@ public class Bot2_advanced {
             hScores[i] = 0;
             vScores[i] = 0;
         }
-        mx = -2147483648;
-        minmax(squares, hScores, vScores, srows, scols, hbtnColors, vbtnColors, botScore, oppScore, true, 3);
+        int[][] copiedSquares = new int[dims+1][dims+1];
+        for (int i=0; i<dims+1; i++) {
+            for (int j=0; j<dims+1; j++) copiedSquares[i][j] = squares[i][j];
+        }
+        
+        char[] copiedHbtnColors = new char[tmp], copiedVbtnColors = new char[tmp];
+        for (int i=0; i<tmp; i++) {
+            copiedHbtnColors[i] = hbtnColors[i];
+            copiedVbtnColors[i] = vbtnColors[i];
+        }
+        minmax(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors, botScore, oppScore, true, maxDepth);
         return res;
     }
 
-    private void minmax(int[][] squares, int[] oldHScores, int[] oldVScores, int[][] srows, int[][] scols, char[] oldHbtnColors, char[] oldVbtnColors, int botScore, int oppScore, boolean turn, int depth) {
-
+    private int minmax(int[][] squares, int[][] srows, int[][] scols, char[] oldHbtnColors, char[] oldVbtnColors, int botScore, int oppScore, boolean turn, int depth) {
         int tmp = dims*(dims+1);
-        if (depth==0 || botScore>=target) {
-            for (int i=0; i<tmp; i++) {
-                if (oldHScores[i]>=mx) {
-                    mx = oldHScores[i];
+        if (depth==0) return botScore-oppScore;
+        int[] hScores = new int[tmp], vScores = new int[tmp];
+        boolean newTurn = turn;
+        // hbtns
+        for (int i=0; i<tmp; i++) {
+            if (oldHbtnColors[i] != 'x') continue;
+            int tmp2 = ++squares[srows[0][i]][scols[0][i]];
+            if (tmp2==4) {
+                if (turn) {
+                    botScore++;
+                    oldHbtnColors[i] = 'g';
+                }
+                else {
+                    oppScore++;
+                    oldHbtnColors[i] = 'r';
+                }
+            }
+            int tmp3 = ++squares[srows[0][i]+1][scols[0][i]];
+            if (tmp3==4) {
+                if (turn) {
+                    botScore++;
+                    oldHbtnColors[i] = 'g';
+                }
+                else {
+                    oppScore++;
+                    oldHbtnColors[i] = 'r';
+                }
+            }
+            if (tmp2!=4 && tmp3!=4) newTurn = !turn;
+            // else newTurn = !turn;
+            hScores[i] = minmax(squares, srows, scols, oldHbtnColors, oldVbtnColors, botScore, oppScore, newTurn, depth-1);
+            squares[srows[0][i]][scols[0][i]]--;
+            squares[srows[0][i]+1][scols[0][i]]--;
+            oldHbtnColors[i] = 'x';
+            if (tmp2==4) {                
+                if (turn) botScore--;
+                else oppScore--;
+            }
+            if (tmp3==4) {
+                if (turn) botScore--;
+                else oppScore--;
+            }
+            newTurn = turn;
+        }
+
+        // vbtns
+        for (int i=0; i<tmp; i++) {
+            if (oldVbtnColors[i] != 'x') continue;
+            int tmp2 = ++squares[srows[1][i]][scols[1][i]];
+            if (tmp2==4) {
+                if (turn) {
+                    botScore++;
+                    oldVbtnColors[i] = 'g';
+                }
+                else {
+                    oppScore++;
+                    oldVbtnColors[i] = 'r';
+                }
+            }
+            int tmp3 = ++squares[srows[1][i]][scols[1][i]+1];
+            if (tmp3==4) {
+                if (turn) {
+                    botScore++;
+                    oldVbtnColors[i] = 'g';
+                }
+                else {
+                    oppScore++;
+                    oldVbtnColors[i] = 'r';
+                }
+            }
+            if (tmp2!=4 && tmp3!=4) newTurn = !turn;
+            // else newTurn = !turn;
+            vScores[i] = minmax(squares, srows, scols, oldHbtnColors, oldVbtnColors, botScore, oppScore, newTurn, depth-1);
+            squares[srows[1][i]][scols[1][i]]--;
+            squares[srows[1][i]][scols[1][i]+1]--;
+            oldVbtnColors[i] = 'x';
+            if (tmp2==4) {                
+                if (turn) botScore--;
+                else oppScore--;
+            }
+            if (tmp3==4) {
+                if (turn) botScore--;
+                else oppScore--;
+            }
+            newTurn = turn;
+        }
+
+        int mx;
+        if (turn) mx = -2147483648;
+        else mx = 2147483647;
+        // hbtns
+        for (int i=0; i<tmp; i++) {
+            if (oldHbtnColors[i]!='x') continue;
+            if (turn && hScores[i]>=mx) {
+                mx = hScores[i];
+                if (depth==maxDepth) {
                     res[0] = i;
                     res[1] = 0;
                 }
-                if (oldVScores[i]>mx) {
-                    mx = oldVScores[i];
+            }
+            else if (!turn && hScores[i]<=mx) mx = hScores[i];
+        }
+        // vbtns
+        for (int i=0; i<tmp; i++) {
+            if (oldVbtnColors[i]!='x') continue;
+            if (turn && vScores[i]>=mx) {
+                mx = vScores[i];
+                if (depth==maxDepth) {
                     res[0] = i;
                     res[1] = 1;
-                }            
+                }
             }
-            return;
-        }; 
-        if (oppScore>=target) return;
-
-        int[][] copiedSquares = new int[dims+1][dims+1];
-        for (int i=0; i<dims+1; i++) {
-            for (int j=0; j<dims+1; j++) copiedSquares[i][j] = squares[i][j];    
+            else if (!turn && vScores[i]<=mx) mx = vScores[i];
         }
-        int[] copiedHScores = new int[tmp], copiedVScores = new int[tmp];
-        char[] copiedHbtnColors = new char[tmp], copiedVbtnColors = new char[tmp];
-        for (int i=0; i<tmp; i++) {
-            copiedHScores[i] = oldHScores[i];
-            copiedVScores[i] = oldVScores[i];
-            copiedHbtnColors[i] = oldHbtnColors[i];
-            copiedVbtnColors[i] = oldVbtnColors[i];
-        }
-        for (int i=0; i<tmp; i++) {
-            int val = 0;
-            int tmp3 = copiedSquares[srows[0][i]][scols[0][i]] + 1, newBotScore = botScore, newOppScore = oppScore;
-            boolean newTurn = turn;
-            
-            if (oldHbtnColors[i] == 'x') {
-                int tmpScore = 0;
-                if (tmp3==4) tmpScore++;
-                val = (tmp3==4) ? 1000 : (tmp3>4 ? 0 : tmp3);
-                if (i>=dims) {
-                    tmp3 = copiedSquares[srows[0][i]+1][scols[0][i]]+1;
-                    copiedSquares[srows[0][i]+1][scols[0][i]]++;
-                    if (tmp3==4) tmpScore++;
-                    val += ((tmp3==4)? 1000 : (tmp3>4 ? 0 : tmp3));
-                }
-                if (turn) {
-                    copiedHScores[i] += val;
-                    copiedHbtnColors[i] = 'r';
-                }
-                else {
-                    copiedHScores[i] -= val;
-                    copiedHbtnColors[i] = 'g';
-                }
-                copiedSquares[srows[0][i]][scols[0][i]]++;
-                if (tmp3==4) {
-                    if (turn) newBotScore += tmpScore;
-                    else newOppScore += tmpScore;
-                }
-                else newTurn = !turn;
-                minmax(copiedSquares, copiedHScores, copiedVScores, srows, scols, copiedHbtnColors, copiedVbtnColors, newBotScore, newOppScore, newTurn, depth-1);
-                copiedSquares[srows[0][i]][scols[0][i]] = squares[srows[0][i]][scols[0][i]];
-                copiedSquares[srows[0][i]+1][scols[0][i]] = squares[srows[0][i]+1][scols[0][i]];
-                copiedHScores[i] = oldHScores[i];
-                copiedHbtnColors[i] = oldHbtnColors[i];
-                newTurn = turn;
-                newBotScore = botScore;
-                newOppScore = oppScore;
-            }
-            tmp3 = copiedSquares[srows[1][i]][scols[1][i]] + 1;
-            if (oldVbtnColors[i] == 'x') {
-                int tmpScore = 0;
-                if (tmp3==4) tmpScore++;
-                val = (tmp3==4) ? 1000 : (tmp3>4 ? 0 : tmp3);
-                if (i%(dims+1)>0) {
-                    tmp3 = copiedSquares[srows[1][i]][scols[1][i]+1]+1;
-                    copiedSquares[srows[1][i]][scols[1][i]+1]++;
-                    if (tmp3==4) tmpScore++;
-                    val += ((tmp3==4)? 1000 : (tmp3>4 ? 0 : tmp3));
-                }
-                if (turn) {
-                    copiedVScores[i] += val; 
-                    copiedVbtnColors[i] = 'r';
-                }
-                else {
-                    copiedVScores[i] -= val; 
-                    copiedVbtnColors[i] = 'g';
-                }
-                copiedSquares[srows[1][i]][scols[1][i]]++;
-                if (tmp3==4) {
-                    if (turn) newBotScore += tmpScore;
-                    else newOppScore += tmpScore;
-                }
-                else newTurn = !turn;
-                minmax(copiedSquares, copiedHScores, copiedVScores, srows, scols, copiedHbtnColors, copiedVbtnColors, newBotScore, newOppScore, newTurn, depth-1);
-                copiedSquares[srows[1][i]][scols[1][i]] = squares[srows[1][i]][scols[1][i]];
-                copiedSquares[srows[1][i]][scols[1][i]+1] = squares[srows[1][i]][scols[1][i]+1];
-                copiedVScores[i] = oldVScores[i];
-                copiedVbtnColors[i] = oldVbtnColors[i];
-                newTurn = turn;
-                newBotScore = botScore;
-                newOppScore = oppScore;
-            }
-            
-        }
-
-        // return res;
+        return mx;
     }
 }

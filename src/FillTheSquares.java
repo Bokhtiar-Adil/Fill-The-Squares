@@ -73,7 +73,12 @@ public class FillTheSquares {
         UI();
         updateScore();
         updateTurnIndicator();
+        frameSetup();
+    }
+
+    private void frameSetup() {
         menu.add(scoreboard);
+        menu.add(details);
         frame.add(menu);
         frame.add(board);
         frame.setVisible(true);
@@ -277,15 +282,9 @@ public class FillTheSquares {
         else {
             updateTurnIndicator();
             if (mode!="vsHuman2p" && !turn) {
-                // try {
-                //     wait(500);
-                // } catch (InterruptedException e) {
-                //     e.printStackTrace();
-                // }
                 botManager();
+                frameSetup();
             } 
-            
-
         }
     }
 
@@ -296,6 +295,7 @@ public class FillTheSquares {
         scoreboard.setBounds(10, 50, 350, 100);
         scoreboard.setVisible(true);
         menu.add(scoreboard);
+        frameSetup();
     }
 
     private void updateTurnIndicator() {
@@ -311,7 +311,8 @@ public class FillTheSquares {
         details.setFont(new Font("Calibri", 0, 30));
         details.setBounds(10, 150, 350, 100);
         details.setVisible(true);
-        menu.add(details);
+        // menu.add(details);
+        frameSetup();
     }
 
     private void finishRoutine() {
@@ -329,13 +330,14 @@ public class FillTheSquares {
         details.setFont(new Font("Calibri", 0, 30));
         details.setBounds(10, 150, 350, 100);
         details.setVisible(true);
-        menu.add(details);
+        // menu.add(details);
+        frameSetup();
     }
 
     private void botManager() {
         int[] botMove = new int[2];
         if (mode=="vsBot1") botMove = bot1.move(squares, srows, scols, hbtnColors, vbtnColors);
-        else if (mode=="vsBot2") botMove = bot2.move(squares, srows, scols, hbtnColors, vbtnColors, player1, player2);
+        else if (mode=="vsBot2") botMove = bot2.move(squares, srows, scols, hbtnColors, vbtnColors, player2, player1);
         if (botMove[1]==0) {
             hbtnColors[botMove[0]] = 'r';
             hddBtns[botMove[0]].setBackground(p2Filled);

@@ -100,7 +100,7 @@ public class App {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == vsBot2) {
                     mainFrame.setVisible(false);
-                    FillTheSquares fillTheSquares = new FillTheSquares("vsBot2", 3);
+                    FillTheSquares fillTheSquares = new FillTheSquares("vsBot2", 4);
                     fillTheSquares.play();
                 }
 
