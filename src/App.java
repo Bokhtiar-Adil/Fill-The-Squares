@@ -11,128 +11,371 @@ import java.awt.event.MouseListener;
 
 public class App {
     
+    static final int FRAME_WIDTH = 1000;
+    static final int FRAME_HEIGHT = 700;
+    static final int NUMBER_OF_MODES = 5;
+    static final int NUMBER_OF_SIZES = 6;
     
+    static int selectedMode = 0, selectedSize = 1;
     
+    private static void setMode(int n) {
+        selectedMode = n;
+    }
+
+    private static void setSize(int n) {
+        selectedSize = n;
+    }
+
     public static void main(String[] args) throws Exception {
+
+        
+        String[] modes = {"vsHuman2p", "onlineP2p", "vsBot1", "vsBot2", "vsBot3"};
+        String[] modeLbls = {"2 PLayer", "Online P2P", "vs Bot-1", "vs Bot-2", "vs Bot-3"};
+        int[] sizes = {3,4,5,6,7,8};
+        String[] sizeLbls = {"3x3", "4x4", "5x5", "6x6", "7x7", "8x8"};
         
         JFrame mainFrame;
         mainFrame = new JFrame();
-        mainFrame.setSize(1000, 700);
+        mainFrame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo((Component)null);
         mainFrame.setDefaultCloseOperation(3);
         mainFrame.setLayout((LayoutManager)null);
-        mainFrame.setTitle("Gamebox");
+        mainFrame.setTitle("Fill-The-Squares");
 
         // bg panel
         JPanel bgPnl;
         bgPnl = new JPanel();
         bgPnl.setLayout((LayoutManager)null);
-        bgPnl.setBounds(0, 0, 1000, 700);
-        bgPnl.setBackground(Color.DARK_GRAY);
+        bgPnl.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+        bgPnl.setBackground(Color.BLACK);
+
+        JLabel titleLbl;
+        titleLbl = new JLabel();
+        titleLbl.setText("FILL THE SQUARES");
+        titleLbl.setFont(new Font("Calibri", 0, 40));
+        titleLbl.setForeground(Color.YELLOW);
+        titleLbl.setBounds(350, 50, 300, 40);
+        titleLbl.setVisible(true);
+        bgPnl.add(titleLbl);
+
 
         // control panels
         JPanel btnPnl;
         btnPnl = new JPanel();
         btnPnl.setLayout((LayoutManager)null);
-        btnPnl.setBounds(0, 0, 350, 700);
-        btnPnl.setBackground(Color.black);
+        btnPnl.setBounds(0, 200, FRAME_WIDTH, FRAME_HEIGHT-200);
+        btnPnl.setBackground(Color.DARK_GRAY);
         
-        // buttons
-        JButton vsHuman2p;
-        vsHuman2p = new JButton();
-        vsHuman2p.setText("Play vs Human");
-        vsHuman2p.setBounds(0, 275, 350, 50);
-        vsHuman2p.setBackground(Color.blue);
-        vsHuman2p.setBorder((Border)null);
-        vsHuman2p.setBorderPainted(false);
-        vsHuman2p.setOpaque(false);
-        vsHuman2p.setFocusable(false);
-        vsHuman2p.setForeground(Color.red);
-        vsHuman2p.setFont(new Font("Calibri", 0, 20));
-        vsHuman2p.addActionListener(new ActionListener() {
+        JButton playBtn;
+        playBtn = new JButton();
+        playBtn.setText("PLAY");
+        playBtn.setBounds(450, 100, 100, 50);
+        playBtn.setVerticalTextPosition(3);
+        playBtn.setBackground(Color.WHITE);
+        playBtn.setBorder((Border)null);
+        playBtn.setBorderPainted(false);
+        playBtn.setOpaque(true);
+        playBtn.setFocusable(false);
+        playBtn.setForeground(Color.BLUE);
+        playBtn.setFont(new Font("Calibri", 0, 30));
+        playBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == vsHuman2p) {
+                if (e.getSource() == playBtn) {
                     mainFrame.setVisible(false);
-                    FillTheSquares fillTheSquares = new FillTheSquares("vsHuman2p", 3);
+                    FillTheSquares fillTheSquares = new FillTheSquares(modes[selectedMode], sizes[selectedSize]);
                     fillTheSquares.play();
                 }
-
             }
         });
-        btnPnl.add(vsHuman2p);
+        playBtn.addMouseListener(new MouseListener() {
 
-        JButton vsBot1;
-        vsBot1 = new JButton();
-        vsBot1.setText("Play vs Bot-1");
-        vsBot1.setBounds(0, 350, 350, 50);
-        vsBot1.setBackground(Color.blue);
-        vsBot1.setBorder((Border)null);
-        vsBot1.setBorderPainted(false);
-        vsBot1.setOpaque(false);
-        vsBot1.setFocusable(false);
-        vsBot1.setForeground(Color.red);
-        vsBot1.setFont(new Font("Calibri", 0, 20));
-        vsBot1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == vsBot1) {
-                    mainFrame.setVisible(false);
-                    FillTheSquares fillTheSquares = new FillTheSquares("vsBot1", 3);
-                    fillTheSquares.play();
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.getSource() == playBtn) {
+                    // playBtn.setForeground(Color.GREEN);
+                    playBtn.setBackground(Color.GREEN);
                 }
-
+                    
             }
-        });
-        btnPnl.add(vsBot1);
 
-        JButton vsBot2;
-        vsBot2 = new JButton();
-        vsBot2.setText("Play vs Bot-2");
-        vsBot2.setBounds(0, 425, 350, 50);
-        vsBot2.setBackground(Color.blue);
-        vsBot2.setBorder((Border)null);
-        vsBot2.setBorderPainted(false);
-        vsBot2.setOpaque(false);
-        vsBot2.setFocusable(false);
-        vsBot2.setForeground(Color.red);
-        vsBot2.setFont(new Font("Calibri", 0, 20));
-        vsBot2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == vsBot2) {
-                    mainFrame.setVisible(false);
-                    FillTheSquares fillTheSquares = new FillTheSquares("vsBot2", 4);
-                    fillTheSquares.play();
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.getSource() == playBtn) {
+                    playBtn.setForeground(Color.BLUE);
+                    playBtn.setBackground(Color.WHITE);
                 }
-
+                
             }
         });
-        btnPnl.add(vsBot2);
+        btnPnl.add(playBtn);
 
-        JButton vsBot3;
-        vsBot3 = new JButton();
-        vsBot3.setText("Play vs Bot-3");
-        vsBot3.setBounds(0, 500, 350, 50);
-        vsBot3.setBackground(Color.blue);
-        vsBot3.setBorder((Border)null);
-        vsBot3.setBorderPainted(false);
-        vsBot3.setOpaque(false);
-        vsBot3.setFocusable(false);
-        vsBot3.setForeground(Color.red);
-        vsBot3.setFont(new Font("Calibri", 0, 20));
-        vsBot3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == vsBot3) {
-                    mainFrame.setVisible(false);
-                    FillTheSquares fillTheSquares = new FillTheSquares("vsBot3", 4);
-                    fillTheSquares.play();
+        
+        int xOffset = 138, yOffset = 200;
+
+        JLabel modeLbl;
+        modeLbl = new JLabel();
+        modeLbl.setText("Mode");
+        modeLbl.setFont(new Font("Calibri", 0, 20));
+        modeLbl.setForeground(Color.YELLOW);
+        modeLbl.setBounds(xOffset, yOffset, 100, 30);
+        modeLbl.setVisible(true);
+        btnPnl.add(modeLbl);
+        xOffset += 100;
+
+        JButton[] modeBtns = new JButton[NUMBER_OF_MODES];
+        for (int i=0; i<NUMBER_OF_MODES; i++, xOffset+=125) {
+            modeBtns[i] = new JButton();
+            modeBtns[i].setText(modeLbls[i]);
+            modeBtns[i].setBounds(xOffset, yOffset, 100, 30);
+            modeBtns[i].setBackground(Color.WHITE);
+            modeBtns[i].setBorder((Border)null);
+            modeBtns[i].setBorderPainted(false);
+            modeBtns[i].setOpaque(false);
+            modeBtns[i].setFocusable(false);
+            modeBtns[i].setForeground(Color.red);
+            modeBtns[i].setFont(new Font("Calibri", 0, 20));
+            final int index = i;
+            modeBtns[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (e.getSource() == modeBtns[index]) {
+                        setMode(index);
+                        for (int j=0; j<NUMBER_OF_MODES; j++) {
+                            if (j==selectedMode) modeBtns[j].setForeground(Color.GREEN);
+                            else modeBtns[j].setForeground(Color.RED);
+                        }
+                    }
                 }
+            });
+            modeBtns[index].addMouseListener(new MouseListener() {
 
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+    
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+    
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+    
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if (e.getSource() == modeBtns[index]) {
+                        // modeBtns[i].setForeground(Color.GREEN);
+                        modeBtns[index].setOpaque(true);
+                    }
+                        
+                }
+    
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    if (e.getSource() == modeBtns[index]) {
+                        modeBtns[index].setOpaque(false);
+                    }
+                    
+                }
+            });
+            btnPnl.add(modeBtns[i]);
+        }
+        
+        xOffset = 138;
+        yOffset += 50;
+
+        JLabel sizeLbl;
+        sizeLbl = new JLabel();
+        sizeLbl.setText("Size");
+        sizeLbl.setFont(new Font("Calibri", 0, 20));
+        sizeLbl.setForeground(Color.YELLOW);
+        sizeLbl.setBounds(xOffset, yOffset, 100, 30);
+        sizeLbl.setVisible(true);
+        btnPnl.add(sizeLbl);
+        xOffset += 100;
+
+        JButton[] sizeBtns = new JButton[NUMBER_OF_SIZES];
+        for (int i=0; i<NUMBER_OF_SIZES; i++, xOffset+=100) {
+            sizeBtns[i] = new JButton();
+            sizeBtns[i].setText(sizeLbls[i]);
+            sizeBtns[i].setBounds(xOffset, yOffset, 75, 30);
+            sizeBtns[i].setBackground(Color.WHITE);
+            sizeBtns[i].setBorder((Border)null);
+            sizeBtns[i].setBorderPainted(false);
+            sizeBtns[i].setOpaque(false);
+            sizeBtns[i].setFocusable(false);
+            sizeBtns[i].setForeground(Color.red);
+            sizeBtns[i].setFont(new Font("Calibri", 0, 20));
+            final int index = i;
+            sizeBtns[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (e.getSource() == sizeBtns[index]) {
+                        setSize(index);
+                        for (int j=0; j<NUMBER_OF_SIZES; j++) {
+                            if (j==selectedSize) sizeBtns[j].setForeground(Color.GREEN);
+                            else sizeBtns[j].setForeground(Color.RED);
+                        }
+                    }
+                }
+            });
+            sizeBtns[index].addMouseListener(new MouseListener() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+    
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+    
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+    
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if (e.getSource() == sizeBtns[index]) {
+                        // sizeBtns[i].setForeground(Color.GREEN);
+                        sizeBtns[index].setOpaque(true);
+                    }
+                        
+                }
+    
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    if (e.getSource() == sizeBtns[index]) {
+                        sizeBtns[index].setOpaque(false);
+                    }
+                    
+                }
+            });
+            btnPnl.add(sizeBtns[i]);
+        }
+
+        xOffset = 300;
+        yOffset += 100;
+
+        JButton rulesBtn;
+        rulesBtn = new JButton();
+        rulesBtn.setText("RULES");
+        rulesBtn.setBounds(xOffset, yOffset, 100, 50);
+        rulesBtn.setBackground(Color.WHITE);
+        rulesBtn.setBorder((Border)null);
+        rulesBtn.setBorderPainted(false);
+        rulesBtn.setOpaque(true);
+        rulesBtn.setFocusable(false);
+        rulesBtn.setForeground(Color.BLUE);
+        rulesBtn.setFont(new Font("Calibri", 0, 30));
+        rulesBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == rulesBtn) {
+                    
+                }
             }
         });
-        btnPnl.add(vsBot3);
+        rulesBtn.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.getSource() == rulesBtn) {
+                    // rulesBtn.setForeground(Color.GREEN);
+                    rulesBtn.setBackground(Color.GREEN);
+                }
+                    
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.getSource() == rulesBtn) {
+                    rulesBtn.setForeground(Color.BLUE);
+                    rulesBtn.setBackground(Color.WHITE);
+                }
+                
+            }
+        });
+        btnPnl.add(rulesBtn);
+        xOffset += 300;
+
+        JButton exitBtn;
+        exitBtn = new JButton();
+        exitBtn.setText("EXIT");
+        exitBtn.setBounds(xOffset, yOffset, 100, 50);
+        exitBtn.setBackground(Color.WHITE);
+        exitBtn.setBorder((Border)null);
+        exitBtn.setBorderPainted(false);
+        exitBtn.setOpaque(true);
+        exitBtn.setFocusable(false);
+        exitBtn.setForeground(Color.BLUE);
+        exitBtn.setFont(new Font("Calibri", 0, 30));
+        exitBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == exitBtn) {
+                    return;
+                }
+            }
+        });
+        exitBtn.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.getSource() == exitBtn) {
+                    // exitBtn.setForeground(Color.GREEN);
+                    exitBtn.setBackground(Color.GREEN);
+                }
+                    
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.getSource() == exitBtn) {
+                    exitBtn.setForeground(Color.BLUE);
+                    exitBtn.setBackground(Color.WHITE);
+                }
+                
+            }
+        });
+        btnPnl.add(exitBtn);
 
         bgPnl.add(btnPnl);
         mainFrame.add(bgPnl);
         mainFrame.setVisible(true);
     }
+
+
 }
