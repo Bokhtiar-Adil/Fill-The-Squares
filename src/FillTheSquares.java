@@ -23,6 +23,7 @@ public class FillTheSquares {
     int currInd, currType;
     Bot1_simple bot1;
     Bot2_advanced bot2;
+    Bot3_fast bot3;
     String mode;
 
     public FillTheSquares(String mode, int n) {
@@ -66,6 +67,7 @@ public class FillTheSquares {
         currType = 2;
         bot1 = new Bot1_simple(n);
         bot2 = new Bot2_advanced(n);
+        bot3 = new Bot3_fast(n);
         this.mode = mode;
     } 
 
@@ -338,6 +340,7 @@ public class FillTheSquares {
         int[] botMove = new int[2];
         if (mode=="vsBot1") botMove = bot1.move(squares, srows, scols, hbtnColors, vbtnColors);
         else if (mode=="vsBot2") botMove = bot2.move(squares, srows, scols, hbtnColors, vbtnColors, player2, player1);
+        else if (mode=="vsBot3") botMove = bot3.move(squares, srows, scols, hbtnColors, vbtnColors, player2, player1);
         if (botMove[1]==0) {
             hbtnColors[botMove[0]] = 'r';
             hddBtns[botMove[0]].setBackground(p2Filled);

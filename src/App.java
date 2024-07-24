@@ -108,6 +108,29 @@ public class App {
         });
         btnPnl.add(vsBot2);
 
+        JButton vsBot3;
+        vsBot3 = new JButton();
+        vsBot3.setText("Play vs Bot-3");
+        vsBot3.setBounds(0, 500, 350, 50);
+        vsBot3.setBackground(Color.blue);
+        vsBot3.setBorder((Border)null);
+        vsBot3.setBorderPainted(false);
+        vsBot3.setOpaque(false);
+        vsBot3.setFocusable(false);
+        vsBot3.setForeground(Color.red);
+        vsBot3.setFont(new Font("Calibri", 0, 20));
+        vsBot3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == vsBot3) {
+                    mainFrame.setVisible(false);
+                    FillTheSquares fillTheSquares = new FillTheSquares("vsBot3", 4);
+                    fillTheSquares.play();
+                }
+
+            }
+        });
+        btnPnl.add(vsBot3);
+
         bgPnl.add(btnPnl);
         mainFrame.add(bgPnl);
         mainFrame.setVisible(true);
