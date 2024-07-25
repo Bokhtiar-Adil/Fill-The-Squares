@@ -1,5 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -10,10 +12,12 @@ public class FillTheSquares {
     
     JFrame frame;
     JLabel scoreboard, details;
+    JLabel[] descs;
     JPanel menu, board;
     JLabel[][] squareLabels;
     int rows, columns;
     JButton[] hddBtns, vddBtns;
+    JButton rulesBtn, backBtn, exitBtn;
     char[] hbtnColors, vbtnColors;
     int[][] srows, scols;
     int[][] squares;
@@ -25,8 +29,20 @@ public class FillTheSquares {
     Bot2_advanced bot2;
     Bot3_fast bot3;
     String mode;
+    int size, menuXOffset = 10, menuYOffset = 50, descItem = 4;
 
-    public FillTheSquares(String mode, int n) {
+    final String APP_NAME = "FILL THE SQUARES";
+    final int FRAME_WIDTH = 1000;
+    final int FRAME_HEIGHT = 700;
+    final int NUMBER_OF_MODES = 5;
+    final int NUMBER_OF_SIZES = 6;
+    String[] modes = {"vsHuman2p", "onlineP2p", "vsBot1", "vsBot2", "vsBot3"};
+    String[] modeLbls = {"2 PLayer", "Online P2P", "vs Bot-1", "vs Bot-2", "vs Bot-3"};
+    int[] sizes = {3,4,5,6,7,8};
+    String[] sizeLbls = {"3x3", "4x4", "5x5", "6x6", "7x7", "8x8"};
+    JFrame mainFrame;
+
+    public FillTheSquares(JFrame mainFrame, String mode, int n) {
         rows = n;
         columns = n;
         hddBtns = new JButton[rows*(columns+1)];
@@ -44,9 +60,15 @@ public class FillTheSquares {
             for (int j=0; j<columns; j++) squareLabels[i][j] = new JLabel();
         }
         frame = new JFrame();
+        menu = new JPanel();
         board = new JPanel();
         scoreboard = new JLabel();
         details = new JLabel();
+        descs = new JLabel[descItem];
+        for (int i=0; i<descItem; i++) descs[i] = new JLabel();
+        rulesBtn = new JButton();
+        backBtn = new JButton();
+        exitBtn = new JButton();
         for (int i=0; i<rows*(columns+1); i++) {
             hddBtns[i] = new JButton();
             hbtnColors[i] = 'x';
@@ -69,6 +91,8 @@ public class FillTheSquares {
         bot2 = new Bot2_advanced(n);
         bot3 = new Bot3_fast(n);
         this.mode = mode;
+        size = n;
+        this.mainFrame = mainFrame;
     } 
 
     public void play() {
@@ -79,8 +103,12 @@ public class FillTheSquares {
     }
 
     private void frameSetup() {
+        for (int i=0; i<descItem; i++) menu.add(descs[i]);
         menu.add(scoreboard);
         menu.add(details);
+        menu.add(rulesBtn);
+        menu.add(backBtn);
+        menu.add(exitBtn);
         frame.add(menu);
         frame.add(board);
         frame.setVisible(true);
@@ -96,20 +124,205 @@ public class FillTheSquares {
         frame.setLocationRelativeTo((Component)null);
         frame.setDefaultCloseOperation(3);
         frame.setLayout((LayoutManager)null);
-        frame.setTitle("Gamebox");
+        frame.setTitle(APP_NAME);
 
         // control panels
-        menu = new JPanel();
         menu.setLayout((LayoutManager)null);
         menu.setBounds(0, 0, 350, 700);
         menu.setBackground(Color.black);
 
-        board = new JPanel();
+        String descText = "";
+        for (int i=0; i<descItem; i++) {
+            int tmp = 0;
+            if (i==0) tmp = 40;
+            int kkk = 0;
+            for (kkk=0; kkk<NUMBER_OF_MODES; kkk++) {
+                if (modes[kkk] == mode) break;
+            }
+            if (i==0) descText = APP_NAME;
+            if (i==1) descText = ("Mode: " + modeLbls[kkk]);
+            kkk = 0;
+            for (kkk=0; kkk<NUMBER_OF_SIZES; kkk++) {
+                if (sizes[kkk] == size) break;
+            }
+            if (i==2) descText = ("Size: " + sizeLbls[kkk]);
+            if (i==3) descText = ("Scoreboard:");
+            descs[i].setText(descText);
+            if (i==0) descs[i].setForeground(Color.CYAN);  
+            else descs[i].setForeground(Color.WHITE); 
+            descs[i].setFont(new Font("Calibri", 0, 30));
+            descs[i].setBounds(menuXOffset+tmp, menuYOffset, 350, 100);
+            descs[i].setVisible(true);
+            menuYOffset+=50;   
+        }
+
+        rulesBtn.setText("Rules");
+        rulesBtn.setBounds(125, menuYOffset+200, 100, 40);
+        rulesBtn.setBackground(Color.WHITE);
+        rulesBtn.setBorder((Border)null);
+        rulesBtn.setBorderPainted(false);
+        rulesBtn.setOpaque(true);
+        rulesBtn.setFocusable(false);
+        rulesBtn.setForeground(Color.BLUE);
+        rulesBtn.setFont(new Font("Calibri", 0, 30));
+        rulesBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == rulesBtn) {
+                    
+                }
+            }
+        });
+        rulesBtn.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.getSource() == rulesBtn) {
+                    // rulesBtn.setForeground(Color.GREEN);
+                    rulesBtn.setBackground(Color.GREEN);
+                }
+                    
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.getSource() == rulesBtn) {
+                    rulesBtn.setForeground(Color.BLUE);
+                    rulesBtn.setBackground(Color.WHITE);
+                }
+                
+            }
+        });
+
+        backBtn.setText("Back");
+        backBtn.setBounds(125, menuYOffset+250, 100, 40);
+        backBtn.setBackground(Color.WHITE);
+        backBtn.setBorder((Border)null);
+        backBtn.setBorderPainted(false);
+        backBtn.setOpaque(true);
+        backBtn.setFocusable(false);
+        backBtn.setForeground(Color.BLUE);
+        backBtn.setFont(new Font("Calibri", 0, 30));
+        backBtn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int chkb = JOptionPane.YES_NO_OPTION;
+                int chkr = JOptionPane.showConfirmDialog(null,
+                        "Are you sure to go back to main menu?", APP_NAME, chkb);
+                if (chkr == 0) {
+                    mainFrame.setVisible(true);
+                    frame.dispose();
+                }                   
+            }
+        });
+        backBtn.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.getSource() == backBtn) {
+                    // backBtn.setForeground(Color.GREEN);
+                    backBtn.setBackground(Color.GREEN);
+                }
+                    
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.getSource() == backBtn) {
+                    backBtn.setForeground(Color.BLUE);
+                    backBtn.setBackground(Color.WHITE);
+                }
+                
+            }
+        });
+
+        exitBtn.setText("Exit");
+        exitBtn.setBounds(125, menuYOffset+300, 100, 40);
+        exitBtn.setBackground(Color.WHITE);
+        exitBtn.setBorder((Border)null);
+        exitBtn.setBorderPainted(false);
+        exitBtn.setOpaque(true);
+        exitBtn.setFocusable(false);
+        exitBtn.setForeground(Color.BLUE);
+        exitBtn.setFont(new Font("Calibri", 0, 30));
+        exitBtn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int chkb = JOptionPane.YES_NO_OPTION;
+                int chkr = JOptionPane.showConfirmDialog(null,
+                        "Are you sure to exit?", APP_NAME, chkb);
+                if (chkr == 0)
+                    System.exit(0);
+
+            }
+
+        });
+        exitBtn.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.getSource() == exitBtn) {
+                    // exitBtn.setForeground(Color.GREEN);
+                    exitBtn.setBackground(Color.GREEN);
+                }
+                    
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.getSource() == exitBtn) {
+                    exitBtn.setForeground(Color.BLUE);
+                    exitBtn.setBackground(Color.WHITE);
+                }
+                
+            }
+        });
+        
+
         board.setLayout((LayoutManager)null);
         board.setBounds(350, 0, 650, 700);
         board.setBackground(Color.DARK_GRAY);
 
-        posX = 70;
+        // 70
+        int ddd = (columns%2==0)?columns/2:columns/2+1;
+        posX = 350 - (ddd*70) + 10;
         posY = 110;
         for (int i=0; i<rows; i++) {
             for (int j=0; j<columns; j++) {
@@ -125,8 +338,8 @@ public class FillTheSquares {
                 board.add(squareLabels[i][j]);
             }
         }
-        
-        posX = 60;
+        // 60
+        posX -= 10;
         posY = 100;
         for (int i=0; i<rows+1; i++) {
             for (int j=0; j<columns; j++) {   
@@ -291,10 +504,14 @@ public class FillTheSquares {
     }
 
     private void updateScore() {
-        scoreboard.setText("Player1: " + player1 + " Player2: " + player2);
-        scoreboard.setBackground(Color.white);
+        String scoreText = "";
+        if (mode == modes[0] || mode == modeLbls[1]) scoreText = "Player 1: " + player1 + " -- Player 2: ";
+        else scoreText = "Player: " + player1 + " -- Bot: ";
+        scoreText += player2;
+        scoreboard.setText(scoreText);
+        scoreboard.setForeground(Color.ORANGE);
         scoreboard.setFont(new Font("Calibri", 0, 30));
-        scoreboard.setBounds(10, 50, 350, 100);
+        scoreboard.setBounds(menuXOffset, menuYOffset, 350, 100);
         scoreboard.setVisible(true);
         menu.add(scoreboard);
         frameSetup();
@@ -302,18 +519,18 @@ public class FillTheSquares {
 
     private void updateTurnIndicator() {
         if (turn) {
-            if (mode=="vsHuman2p") details.setText("Turn: Player1");
+            if (mode=="vsHuman2p") details.setText("Turn: Player 1");
             else details.setText("Turn: Player");
+            details.setForeground(Color.GREEN);
         }
         else {
-            if (mode=="vsHuman2p") details.setText("Turn: Player2");
+            if (mode=="vsHuman2p") details.setText("Turn: Player 2");
             else details.setText("Turn: Bot");    
-        }
-        details.setBackground(Color.white);
+            details.setForeground(Color.RED);
+        }        
         details.setFont(new Font("Calibri", 0, 30));
-        details.setBounds(10, 150, 350, 100);
+        details.setBounds(menuXOffset, menuYOffset+50, 350, 100);
         details.setVisible(true);
-        // menu.add(details);
         frameSetup();
     }
 
@@ -330,9 +547,8 @@ public class FillTheSquares {
         else details.setText("Its a draw!!");
         details.setBackground(Color.white);
         details.setFont(new Font("Calibri", 0, 30));
-        details.setBounds(10, 150, 350, 100);
+        details.setBounds(10, 250, 350, 100);
         details.setVisible(true);
-        // menu.add(details);
         frameSetup();
     }
 
@@ -352,60 +568,4 @@ public class FillTheSquares {
         
         scoring(srows[botMove[1]][botMove[0]], scols[botMove[1]][botMove[0]], botMove[1], botMove[0]);        
     }
-
-    // private void scoring_old() {
-    //     boolean done = false;
-        
-    //     if (currType==0) {
-    //         if (hbtnColors[currInd]=='g') {
-    //             if (currInd>=8 && hbtnColors[currInd-8]=='g') {
-    //                 // int tmp = (currInd-8)+((int)((currInd-8)/8));
-    //                 int tmp = currInd + currInd%rows - (rows+1);
-    //                 if (vbtnColors[tmp]=='g' && vbtnColors[tmp+1]=='g') {
-    //                     if (!turn) player1++; // turn gets changed right after move is recorded, so, use the reversed value
-    //                     else player2++;
-    //                     done = true;
-    //                 }   
-    //             }
-    //             if (done) return;
-
-    //             if (currInd<8 && hbtnColors[currInd+8]=='g') {
-    //                 int tmp = currInd+((int)(currInd/8));
-    //                 if (vbtnColors[tmp]=='g' && vbtnColors[tmp+1]=='g') {
-    //                     if (!turn) player1++; // turn gets changed right after move is recorded, so, use the reversed value
-    //                     else player2++;
-    //                     done = true;
-    //                 }   
-    //             }
-    //             if (done) return;
-    //         }
-    //     }
-
-    //     if (currType==1) {
-    //         if (vbtnColors[currInd]=='g') {
-    //             if (currInd%9>0 && vbtnColors[currInd-1]=='g') {
-    //                 int tmp = (currInd-1)-((int)((currInd-1)/8));
-    //                 if (hbtnColors[tmp]=='g' && hbtnColors[tmp+8]=='g') {
-    //                     if (!turn) player1++; // turn gets changed right after move is recorded, so, use the reversed value
-    //                     else player2++;
-    //                     done = true;
-    //                 }   
-    //             }
-    //             if (done) return;
-
-    //             if (currInd%9<8 && vbtnColors[currInd+1]=='g') {
-    //                 int tmp = currInd-((int)(currInd/8));
-    //                 if (hbtnColors[tmp]=='g' && hbtnColors[tmp+8]=='g') {
-    //                     if (!turn) player1++; // turn gets changed right after move is recorded, so, use the reversed value
-    //                     else player2++;
-    //                     done = true;
-    //                 }   
-    //             }
-    //             if (done) return;
-    //         }
-    //     }
-    // }
-
-
-
 }

@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import java.awt.*;
-import java.awt.color.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -10,6 +9,8 @@ import java.awt.event.MouseListener;
 
 
 public class App {
+    
+    static final String APP_NAME = "FILL THE SQUARES";
     
     static final int FRAME_WIDTH = 1000;
     static final int FRAME_HEIGHT = 700;
@@ -41,7 +42,7 @@ public class App {
         mainFrame.setLocationRelativeTo((Component)null);
         mainFrame.setDefaultCloseOperation(3);
         mainFrame.setLayout((LayoutManager)null);
-        mainFrame.setTitle("Fill-The-Squares");
+        mainFrame.setTitle(APP_NAME);
 
         // bg panel
         JPanel bgPnl;
@@ -52,9 +53,9 @@ public class App {
 
         JLabel titleLbl;
         titleLbl = new JLabel();
-        titleLbl.setText("FILL THE SQUARES");
+        titleLbl.setText(APP_NAME);
         titleLbl.setFont(new Font("Calibri", 0, 40));
-        titleLbl.setForeground(Color.YELLOW);
+        titleLbl.setForeground(Color.CYAN);
         titleLbl.setBounds(350, 50, 300, 40);
         titleLbl.setVisible(true);
         bgPnl.add(titleLbl);
@@ -83,7 +84,7 @@ public class App {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == playBtn) {
                     mainFrame.setVisible(false);
-                    FillTheSquares fillTheSquares = new FillTheSquares(modes[selectedMode], sizes[selectedSize]);
+                    FillTheSquares fillTheSquares = new FillTheSquares(mainFrame, modes[selectedMode], sizes[selectedSize]);
                     fillTheSquares.play();
                 }
             }
@@ -129,7 +130,7 @@ public class App {
         modeLbl = new JLabel();
         modeLbl.setText("Mode");
         modeLbl.setFont(new Font("Calibri", 0, 20));
-        modeLbl.setForeground(Color.YELLOW);
+        modeLbl.setForeground(Color.CYAN);
         modeLbl.setBounds(xOffset, yOffset, 100, 30);
         modeLbl.setVisible(true);
         btnPnl.add(modeLbl);
@@ -200,7 +201,7 @@ public class App {
         sizeLbl = new JLabel();
         sizeLbl.setText("Size");
         sizeLbl.setFont(new Font("Calibri", 0, 20));
-        sizeLbl.setForeground(Color.YELLOW);
+        sizeLbl.setForeground(Color.CYAN);
         sizeLbl.setBounds(xOffset, yOffset, 100, 30);
         sizeLbl.setVisible(true);
         btnPnl.add(sizeLbl);
@@ -337,6 +338,19 @@ public class App {
                     return;
                 }
             }
+        });
+        exitBtn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int chkb = JOptionPane.YES_NO_OPTION;
+                int chkr = JOptionPane.showConfirmDialog(null,
+                        "Are you sure to exit?", APP_NAME, chkb);
+                if (chkr == 0)
+                    System.exit(0);
+
+            }
+
         });
         exitBtn.addMouseListener(new MouseListener() {
 
