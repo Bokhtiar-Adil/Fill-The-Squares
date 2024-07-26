@@ -136,9 +136,17 @@ public class App {
         btnPnl.add(modeLbl);
         xOffset += 100;
 
+        boolean onlineYet = true;
         JButton[] modeBtns = new JButton[NUMBER_OF_MODES];
         for (int i=0; i<NUMBER_OF_MODES; i++, xOffset+=125) {
             modeBtns[i] = new JButton();
+            if (!onlineYet) {
+                if (i==0) xOffset+=125;
+                if (i==1) {
+                    xOffset-=125;
+                    continue;
+                }                
+            }
             modeBtns[i].setText(modeLbls[i]);
             modeBtns[i].setBounds(xOffset, yOffset, 100, 30);
             modeBtns[i].setBackground(Color.WHITE);

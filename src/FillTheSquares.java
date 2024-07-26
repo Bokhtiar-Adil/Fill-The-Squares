@@ -12,7 +12,7 @@ public class FillTheSquares {
     
     JFrame frame;
     JLabel scoreboard, details;
-    JLabel[] descs;
+    JLabel[] descs, bdescs;
     JPanel menu, board;
     JLabel[][] squareLabels;
     int rows, columns;
@@ -29,7 +29,7 @@ public class FillTheSquares {
     Bot2_advanced bot2;
     Bot3_fast bot3;
     String mode;
-    int size, menuXOffset = 10, menuYOffset = 50, descItem = 4;
+    int size, menuXOffset = 10, menuYOffset = 50, descItem = 4, bdescItem = 1;
 
     final String APP_NAME = "FILL THE SQUARES";
     final int FRAME_WIDTH = 1000;
@@ -66,6 +66,8 @@ public class FillTheSquares {
         details = new JLabel();
         descs = new JLabel[descItem];
         for (int i=0; i<descItem; i++) descs[i] = new JLabel();
+        bdescs = new JLabel[bdescItem];
+        for (int i=0; i<bdescItem; i++) bdescs[i] = new JLabel();
         rulesBtn = new JButton();
         backBtn = new JButton();
         exitBtn = new JButton();
@@ -110,6 +112,7 @@ public class FillTheSquares {
         menu.add(backBtn);
         menu.add(exitBtn);
         frame.add(menu);
+        for (int i=0; i<bdescItem; i++) board.add(bdescs[i]);
         frame.add(board);
         frame.setVisible(true);
     }
@@ -320,10 +323,19 @@ public class FillTheSquares {
         board.setBounds(350, 0, 650, 700);
         board.setBackground(Color.DARK_GRAY);
 
-        // 70
+        for (int i=0; i<bdescItem; i++) {
+            int t = rows*columns, t2 = player1+player2, t3 = t-t2;;
+            if (i==0) bdescs[i].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
+            bdescs[i].setFont(new Font("Calibri", 0, 20));
+            bdescs[i].setBounds(173, 20, 305, 100);
+            bdescs[i].setForeground(Color.WHITE);
+            bdescs[i].setVisible(true);
+        }
+
+        // 70, 110
         int ddd = (columns%2==0)?columns/2:columns/2+1;
         posX = 350 - (ddd*70) + 10;
-        posY = 110;
+        posY = 375 - ddd*60;
         for (int i=0; i<rows; i++) {
             for (int j=0; j<columns; j++) {
                 squareLabels[i][j].setText(" ");
@@ -340,7 +352,7 @@ public class FillTheSquares {
         }
         // 60
         posX -= 10;
-        posY = 100;
+        posY -= 10;
         for (int i=0; i<rows+1; i++) {
             for (int j=0; j<columns; j++) {   
                 srows[0][i*rows+j] = (i>0)?i-1:0;
@@ -505,15 +517,16 @@ public class FillTheSquares {
 
     private void updateScore() {
         String scoreText = "";
-        if (mode == modes[0] || mode == modeLbls[1]) scoreText = "Player 1: " + player1 + " -- Player 2: ";
-        else scoreText = "Player: " + player1 + " -- Bot: ";
+        if (mode == modes[0] || mode == modeLbls[1]) scoreText = "Player 1: " + player1 + " | Player 2: ";
+        else scoreText = "Player: " + player1 + " | Bot: ";
         scoreText += player2;
         scoreboard.setText(scoreText);
         scoreboard.setForeground(Color.ORANGE);
         scoreboard.setFont(new Font("Calibri", 0, 30));
         scoreboard.setBounds(menuXOffset, menuYOffset, 350, 100);
         scoreboard.setVisible(true);
-        menu.add(scoreboard);
+        int t = rows*columns, t2 = player1+player2, t3 = t-t2;;
+        bdescs[0].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
         frameSetup();
     }
 
@@ -547,7 +560,7 @@ public class FillTheSquares {
         else details.setText("Its a draw!!");
         details.setBackground(Color.white);
         details.setFont(new Font("Calibri", 0, 30));
-        details.setBounds(10, 250, 350, 100);
+        details.setBounds(menuXOffset, menuYOffset+50, 350, 100);
         details.setVisible(true);
         frameSetup();
     }
