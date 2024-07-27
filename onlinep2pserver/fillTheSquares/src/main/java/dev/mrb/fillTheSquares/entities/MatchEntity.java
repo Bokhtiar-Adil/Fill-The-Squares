@@ -24,12 +24,12 @@ public class MatchEntity {
     private PlayerEntity guest;
     private Long size;
     private String state;
-    private Long last_move_host_currType;
-    private Long last_move_host_currInd;
-    private Long last_move_guest_currType;
-    private Long last_move_guest_currInd;
-    private Boolean isHostLastMoveUpdated;
-    private Boolean isGuestLastMoveUpdated;
+    private Long lastMoveHostCurrType;
+    private Long lastMoveHostCurrInd;
+    private Long lastMoveGuestCurrType;
+    private Long lastMoveGuestCurrInd;
+    private Boolean isHostLastMoveNew;
+    private Boolean isGuestLastMoveNew;
     private Boolean isHostConnected;
     private Boolean isGuestConnected;
 }

@@ -1,18 +1,25 @@
 package dev.mrb.fillTheSquares.dtos;
 
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class MatchDto {
 
     private Long matchId;
-    private PlayerDto host;
-    private PlayerDto guest;
+    private Long host;
+    private Long guest;
     private Long size;
     private String state;
-    private Long last_move_host_currType;
-    private Long last_move_host_currInd;
-    private Long last_move_guest_currType;
-    private Long last_move_guest_currInd;
-    private Boolean isHostLastMoveUpdated;
-    private Boolean isGuestLastMoveUpdated;
+    private Long lastMoveHostCurrType;
+    private Long lastMoveHostCurrInd;
+    private Long lastMoveGuestCurrType;
+    private Long lastMoveGuestCurrInd;
+    private Boolean isHostLastMoveNew;
+    private Boolean isGuestLastMoveNew;
     private Boolean isHostConnected;
     private Boolean isGuestConnected;
 }
