@@ -1,40 +1,46 @@
 public class Bot2_advanced {
     
-    int dims, target, current;
+    int dims;
     int[] hScores, vScores, res;
     int maxDepth;
     
     public Bot2_advanced(int n) {
         dims = n;
-        hScores = new int[n*(n+1)];
+        // these two will contain the calculated scores of the correspoding hbtns and vbtns 
+        hScores = new int[n*(n+1)]; 
         vScores = new int[n*(n+1)];
-        target = (n*n)/2 + 1;
+        // res contains the result i.e. the decided move of the bot
+        // res[0] = currInd, res[1] = currType
         res = new int[2];
-        maxDepth = 5;
+        maxDepth = 5; // depth of the minmax algorithm
     }
 
+    // this bot implements minmax algorithm with alpha-beta pruning
     public int[] move(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors, char[] vbtnColors, int botScore, int oppScore) {
         
         int tmp = dims*(dims+1);
+        // initializing with zeroes to get the fresh value
         for (int i=0; i<tmp; i++) {
             hScores[i] = 0;
             vScores[i] = 0;
         }
+        // copying the value to not affect the actual squares array
         int[][] copiedSquares = new int[dims+1][dims+1];
         for (int i=0; i<dims+1; i++) {
             for (int j=0; j<dims+1; j++) copiedSquares[i][j] = squares[i][j];
         }
-        
+        // copying the value to not affect the actual btnColors arrays
         char[] copiedHbtnColors = new char[tmp], copiedVbtnColors = new char[tmp];
         for (int i=0; i<tmp; i++) {
             copiedHbtnColors[i] = hbtnColors[i];
             copiedVbtnColors[i] = vbtnColors[i];
         }
-        //minmax(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors, botScore, oppScore, true, maxDepth);
-        minmax_v2(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors, 0, -2147483648, 2147473647, true, maxDepth);
+        // calling minmax algorithm
+        minmax(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors, 0, -2147483648, 2147473647, true, maxDepth);
+        // after minmax algorithm finishes calculatiing the heuristic scores for each btn, the highest value is picked
         int best = -2147483648;
         for (int i = 0; i < tmp; i++) {
-            if (hbtnColors[i] != 'x')
+            if (hbtnColors[i] != 'x') // means already filled btns
                 continue;
             if (hScores[i] > best) {
                 best = hScores[i];
@@ -43,7 +49,7 @@ public class Bot2_advanced {
             }
         }
         for (int i = 0; i < tmp; i++) {
-            if (vbtnColors[i] != 'x')
+            if (vbtnColors[i] != 'x') // means already filled btns
                 continue;
             if (vScores[i] > best) {
                 best = vScores[i];
@@ -54,155 +60,43 @@ public class Bot2_advanced {
         return res;
     }
 
-    private int minmax(int[][] squares, int[][] srows, int[][] scols, char[] oldHbtnColors, char[] oldVbtnColors, int botScore, int oppScore, boolean turn, int depth) {
-        int tmp = dims*(dims+1);
-        if (depth==0) return botScore-oppScore;
-        int[] hScores = new int[tmp], vScores = new int[tmp];
-        boolean newTurn = turn;
-        // hbtns
-        for (int i=0; i<tmp; i++) {
-            if (oldHbtnColors[i] != 'x') continue;
-            int tmp2 = ++squares[srows[0][i]][scols[0][i]];
-            if (tmp2==4) {
-                if (turn) {
-                    botScore++;
-                    oldHbtnColors[i] = 'g';
-                }
-                else {
-                    oppScore++;
-                    oldHbtnColors[i] = 'r';
-                }
-            }
-            int tmp3 = ++squares[srows[0][i]+1][scols[0][i]];
-            if (tmp3==4) {
-                if (turn) {
-                    botScore++;
-                    oldHbtnColors[i] = 'g';
-                }
-                else {
-                    oppScore++;
-                    oldHbtnColors[i] = 'r';
-                }
-            }
-            if (tmp2!=4 && tmp3!=4) newTurn = !turn;
-            // else newTurn = !turn;
-            hScores[i] = minmax(squares, srows, scols, oldHbtnColors, oldVbtnColors, botScore, oppScore, newTurn, depth-1);
-            squares[srows[0][i]][scols[0][i]]--;
-            squares[srows[0][i]+1][scols[0][i]]--;
-            oldHbtnColors[i] = 'x';
-            if (tmp2==4) {                
-                if (turn) botScore--;
-                else oppScore--;
-            }
-            if (tmp3==4) {
-                if (turn) botScore--;
-                else oppScore--;
-            }
-            newTurn = turn;
-        }
+    // minmax algorithm with alpha-beta pruning
+    private int minmax(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors, char[] vbtnColors, int currScore, int alpha, int beta, boolean turn, int depth) {
 
-        // vbtns
-        for (int i=0; i<tmp; i++) {
-            if (oldVbtnColors[i] != 'x') continue;
-            int tmp2 = ++squares[srows[1][i]][scols[1][i]];
-            if (tmp2==4) {
-                if (turn) {
-                    botScore++;
-                    oldVbtnColors[i] = 'g';
-                }
-                else {
-                    oppScore++;
-                    oldVbtnColors[i] = 'r';
-                }
-            }
-            int tmp3 = ++squares[srows[1][i]][scols[1][i]+1];
-            if (tmp3==4) {
-                if (turn) {
-                    botScore++;
-                    oldVbtnColors[i] = 'g';
-                }
-                else {
-                    oppScore++;
-                    oldVbtnColors[i] = 'r';
-                }
-            }
-            if (tmp2!=4 && tmp3!=4) newTurn = !turn;
-            // else newTurn = !turn;
-            vScores[i] = minmax(squares, srows, scols, oldHbtnColors, oldVbtnColors, botScore, oppScore, newTurn, depth-1);
-            squares[srows[1][i]][scols[1][i]]--;
-            squares[srows[1][i]][scols[1][i]+1]--;
-            oldVbtnColors[i] = 'x';
-            if (tmp2==4) {                
-                if (turn) botScore--;
-                else oppScore--;
-            }
-            if (tmp3==4) {
-                if (turn) botScore--;
-                else oppScore--;
-            }
-            newTurn = turn;
-        }
-
-        int mx;
-        if (turn) mx = -2147483648;
-        else mx = 2147483647;
-        // hbtns
-        for (int i=0; i<tmp; i++) {
-            if (oldHbtnColors[i]!='x') continue;
-            if (turn && hScores[i]>=mx) {
-                mx = hScores[i];
-                if (depth==maxDepth) {
-                    res[0] = i;
-                    res[1] = 0;
-                }
-            }
-            else if (!turn && hScores[i]<=mx) mx = hScores[i];
-        }
-        // vbtns
-        for (int i=0; i<tmp; i++) {
-            if (oldVbtnColors[i]!='x') continue;
-            if (turn && vScores[i]>=mx) {
-                mx = vScores[i];
-                if (depth==maxDepth) {
-                    res[0] = i;
-                    res[1] = 1;
-                }
-            }
-            else if (!turn && vScores[i]<=mx) mx = vScores[i];
-        }
-        return mx;
-    }
-
-    private int minmax_v2(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors,
-            char[] vbtnColors, int currScore, int alpha, int beta, boolean turn, int depth) {
-
+        // base case
         if (depth == 0)
             return currScore;
-        int tmp = dims * (dims + 1);
-        // hbtns
-        int best = (turn) ? -2147483648 : 2147483647;
+        // dimension of the hbtns and vbtns arrays
+            int tmp = dims * (dims + 1);
+        /// hbtns
+        int best = (turn) ? -2147483648 : 2147483647; // if bot's turn, most is best; if player's turn least is best
         for (int i = 0; i < tmp; i++) {
+            // skipping the already filled btns
             if (hbtnColors[i] != 'x')
                 continue;
             boolean newTurn = turn;
+            // adding one to the corresponding square
             int tmp2 = squares[srows[0][i]][scols[0][i]] + 1;
             squares[srows[0][i]][scols[0][i]]++;
             int tmp3 = 0;
+            // taking care of the second square
             if (i >= dims) {
                 tmp3 = squares[srows[0][i] + 1][scols[0][i]] + 1;
                 squares[srows[0][i] + 1][scols[0][i]]++;
             }
+            // calculating heuristic value for this btn
             int val = heuristicValueCalculation(tmp2, tmp3, depth);
+            // finding the turn for the next move
             newTurn = findNewTurn(tmp2, tmp3, newTurn);
             if (turn == true)
-                hbtnColors[i] = 'r';
+                hbtnColors[i] = 'r'; // bot's move
             else
-                hbtnColors[i] = 'g';
-            hScores[i] = minmax_v2(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
+                hbtnColors[i] = 'g'; // player's move
+            hScores[i] = minmax(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
                     beta, newTurn, (newTurn == turn) ? depth : depth - 1);
+            // unchanging the changed values so that the next iteration will not be affected by the current iteration
             hbtnColors[i] = 'x';
             squares[srows[0][i]][scols[0][i]]--;
-            newTurn = turn;
             if (i >= dims)
                 squares[srows[0][i] + 1][scols[0][i]]--;
             if (turn == true) {
@@ -221,9 +115,10 @@ public class Bot2_advanced {
                 if (best < beta)
                     beta = best;
             }
-            if (beta<alpha) break;
+            if (beta<alpha) break; // alpha-beta pruning
         }
 
+        // now doing the same for the vertical btns
         for (int i = 0; i < tmp; i++) {
             if (vbtnColors[i] != 'x')
                 continue;
@@ -241,7 +136,7 @@ public class Bot2_advanced {
                 vbtnColors[i] = 'r';
             else
                 vbtnColors[i] = 'g';
-            vScores[i] = minmax_v2(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
+            vScores[i] = minmax(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
                     beta, newTurn, (newTurn == turn) ? depth : depth - 1);
             vbtnColors[i] = 'x';
             squares[srows[1][i]][scols[1][i]]--;
@@ -269,20 +164,32 @@ public class Bot2_advanced {
 
     private int heuristicValueCalculation(int criterion_1, int criterion_2, int depth) {
         int val = 0;
-        if (criterion_1 == 4 && criterion_2 == 4)
-            val += 50 * depth;
+        // each value is multiplied by depth means - 
+        // suppose we don't multiply by depth - 2 squares get 50, 1 get 25, and so on
+        // now, we can get the score 80 in multiple ways - (50+25+5) or (5+25+50) or others
+        // this means, the bot can pick 2 squares at first move or at second move or at last move
+        // but, if it picks the 5 at the first move, player gets turn for the next move
+        // then the player can take the squares
+        // so the bot needs to take 2 squares first i.e. score 50, not the score 5
+        // to solve this issue, depth is multiplied
+        // now (5+25+50) becomes (5*3+25*2+50*1) = 115 and (50+25+5) becomes (50*3+25*2+5*1) = 205
+        // so, 2 squares will be picked first
+        if (criterion_1 == 4 && criterion_2 == 4) 
+            val += 50 * depth; // this move will get 2 squares, so a huge value is assigned
         else if (criterion_1 == 4 || criterion_2 == 4)
-            val += 25 * depth;
+            val += 25 * depth; // this move will get 1 square, so half of the previous value is assigned
         else if (criterion_1 == 3 || criterion_2 == 3) 
-            val -= 50 * depth;
+            val -= 50 * depth; // this move will give the opponent a chance to fill the square, so it is having a negative value
         else 
-            val += 5 * depth;
+            val += 5 * depth; // this move has no immediate good effect
         return val;
     }
 
+    // if bot gets square/s, it will get another consecutive turn
     private boolean findNewTurn(int criterion_1, int criterion_2, boolean turn) {
         if (criterion_1==4 || criterion_2==4) return turn;
         else return !turn;
     }
 
 }
+

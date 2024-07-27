@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface MatchServices {
 
-    public Long createMatch(MatchDto matchDto);
+    public Long createMatch(Long hostId, Long size);
     public Optional<Long> findAvailableMatch();
-    public int joinAsHost(Long matchId, Long playerId);
+    public int joinAsGuest(Long matchId, Long playerId);
     public int updateMatchState(Long matchId, String newState);
     public int updateConnectionStatus(Long matchId, Boolean isHost, Boolean isConnected);
     public int updateLastMove(Long matchId, Boolean isHost, Long[] moveProperties);

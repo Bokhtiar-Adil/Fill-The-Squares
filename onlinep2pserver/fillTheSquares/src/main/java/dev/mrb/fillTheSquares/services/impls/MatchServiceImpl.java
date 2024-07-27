@@ -34,15 +34,15 @@ public class MatchServiceImpl implements MatchServices {
         return matchDto;
     }
     @Override
-    public Long createMatch(MatchDto matchDto) {
+    public Long createMatch(Long hostId, Long size) {
 //        MatchEntity
-        PlayerEntity playerEntity = playerRepository.findById(matchDto.getHost()).get();
+        PlayerEntity playerEntity = playerRepository.findById(hostId).get();
         if (playerEntity==null) return null;
         MatchEntity matchEntity = new MatchEntity();
         matchEntity.setHost(playerEntity);
         matchEntity.setState("WAITING");
         matchEntity.setGuest(null);
-        matchEntity.setSize(matchDto.getSize());
+        matchEntity.setSize(size);
         matchEntity.setIsHostConnected(true);
         matchEntity.setIsGuestConnected(false);
         matchEntity.setIsHostLastMoveNew(false);
@@ -61,7 +61,7 @@ public class MatchServiceImpl implements MatchServices {
     }
 
     @Override
-    public int joinAsHost(Long matchId, Long playerId) {
+    public int joinAsGuest(Long matchId, Long playerId) {
         PlayerEntity playerEntity = playerRepository.findById(playerId).get();
         if (playerEntity==null) return -1;
         MatchEntity matchEntity = matchRepository.findById(matchId).get();

@@ -1,6 +1,6 @@
 public class Bot3_fast {
 
-    int dims, target, current;
+    int dims;
     int[] hScores, vScores, res;
     int maxDepth;
     
@@ -8,11 +8,14 @@ public class Bot3_fast {
         dims = n;
         hScores = new int[n * (n + 1)];
         vScores = new int[n * (n + 1)];
-        target = (n * n) / 2 + 1;
         res = new int[2];
         maxDepth = 3;
     }
 
+    // this bot uses the same minmax function as bot 2
+    // but applies another layer of optimization before going into the minmax function
+    // this optimization makes it faster and harder to defeat
+    // it kinds of combines both bot-1 and bot-2
     public int[] move(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors, char[] vbtnColors, int botScore,
             int oppScore) {
 
@@ -33,6 +36,7 @@ public class Bot3_fast {
             copiedVbtnColors[i] = vbtnColors[i];
         }
         int best = -2147483648;
+        // optimization layer
         find_Immediate_Best_move(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors);
         for (int i = 0; i < tmp; i++) {
             if (hbtnColors[i] != 'x')
@@ -52,8 +56,9 @@ public class Bot3_fast {
                 res[1] = 1;
             }
         }
-        if (best>=1) return res; 
-        minmax_v2(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors, 0, -2147483647,
+        if (best>=1) return res;
+        // depending on the situation, this function might not even enter into a minmax recursion at all  
+        minmax(copiedSquares, srows, scols, copiedHbtnColors, copiedVbtnColors, 0, -2147483647,
                 2147483647, true, maxDepth);
         for (int i = 0; i < tmp; i++) {
             if (hbtnColors[i] != 'x')
@@ -76,7 +81,8 @@ public class Bot3_fast {
         return res;
     }
 
-    private int minmax_v2(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors,
+    // minmax with alpha-beta pruning -- same as bot-2
+    private int minmax(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors,
             char[] vbtnColors, int currScore, int alpha, int beta, boolean turn, int depth) {
 
         if (depth == 0)
@@ -101,7 +107,7 @@ public class Bot3_fast {
                 hbtnColors[i] = 'r';
             else
                 hbtnColors[i] = 'g';
-            hScores[i] = minmax_v2(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
+            hScores[i] = minmax(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
                     beta, newTurn, (newTurn == turn) ? depth : depth - 1);
             hbtnColors[i] = 'x';
             squares[srows[0][i]][scols[0][i]]--;
@@ -144,7 +150,7 @@ public class Bot3_fast {
                 vbtnColors[i] = 'r';
             else
                 vbtnColors[i] = 'g';
-            vScores[i] = minmax_v2(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
+            vScores[i] = minmax(squares, srows, scols, hbtnColors, vbtnColors, currScore + val, alpha,
                     beta, newTurn, (newTurn == turn) ? depth : depth - 1);
             vbtnColors[i] = 'x';
             squares[srows[1][i]][scols[1][i]]--;
@@ -170,6 +176,11 @@ public class Bot3_fast {
 
     }
 
+    // the idea is, if a 2-square move is found, it must be taken immediately
+    // similarly, if a 1-square is found, it must be taken immediately too
+    // acquiring square/s gives a free consecutive turn
+    // so if there are no 1 or 2 squares that can be acquired in the immediate next move, 
+    // then the minmax is applied to find the possible best move
     private void find_Immediate_Best_move(int[][] squares, int[][] srows, int[][] scols, char[] hbtnColors, char[] vbtnColors) {
 
         int tmp = dims * (dims + 1);
@@ -197,6 +208,7 @@ public class Bot3_fast {
         }
     }
     
+    // same as bot-2
     private int heuristicValueCalculation(int criterion_1, int criterion_2, int depth) {
         int val = 0;
         if (criterion_1 == 4 && criterion_2 == 4)
@@ -210,6 +222,7 @@ public class Bot3_fast {
         return val;
     }
 
+    // same as bot-2
     private boolean findNewTurn(int criterion_1, int criterion_2, boolean turn) {
         if (criterion_1==4 || criterion_2==4) return turn;
         else return !turn;
