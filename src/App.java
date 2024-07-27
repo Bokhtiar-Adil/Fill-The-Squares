@@ -44,14 +44,14 @@ public class App {
         mainFrame.setLayout((LayoutManager)null);
         mainFrame.setTitle(APP_NAME);
 
-        // bg panel
+        // bg panel - this panel works as the background for the frame
         JPanel bgPnl;
         bgPnl = new JPanel();
         bgPnl.setLayout((LayoutManager)null);
         bgPnl.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
         bgPnl.setBackground(Color.BLACK);
 
-        JLabel titleLbl;
+        JLabel titleLbl; // writes title on the screen
         titleLbl = new JLabel();
         titleLbl.setText(APP_NAME);
         titleLbl.setFont(new Font("Calibri", 0, 40));
@@ -61,7 +61,7 @@ public class App {
         bgPnl.add(titleLbl);
 
 
-        // control panels
+        // control panels -- holds all the buttons to play the game
         JPanel btnPnl;
         btnPnl = new JPanel();
         btnPnl.setLayout((LayoutManager)null);
@@ -84,6 +84,7 @@ public class App {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == playBtn) {
                     mainFrame.setVisible(false);
+                    // based on the selected properties, the correspoding game will open
                     FillTheSquares fillTheSquares = new FillTheSquares(mainFrame, modes[selectedMode], sizes[selectedSize]);
                     fillTheSquares.play();
                 }
@@ -124,7 +125,7 @@ public class App {
         btnPnl.add(playBtn);
 
         
-        int xOffset = 138, yOffset = 200;
+        int xOffset = 138, yOffset = 200; // to synchronize the buttons alignment
 
         JLabel modeLbl;
         modeLbl = new JLabel();

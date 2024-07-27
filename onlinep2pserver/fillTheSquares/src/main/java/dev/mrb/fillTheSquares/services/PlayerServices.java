@@ -7,5 +7,7 @@ public interface PlayerServices {
 
     public void deletePlayer(Long playerId);
 
+    public PlayerDto findPlayer(Long playerId);
+
     public PlayerDto updateUsername(Long playerId, String newUsername);
 }

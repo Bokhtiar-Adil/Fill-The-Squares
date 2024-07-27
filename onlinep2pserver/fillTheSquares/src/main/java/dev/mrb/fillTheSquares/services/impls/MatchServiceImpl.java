@@ -94,16 +94,65 @@ public class MatchServiceImpl implements MatchServices {
 
     @Override
     public int updateLastMove(Long matchId, Boolean isHost, Long[] moveProperties) {
-
+        MatchEntity matchEntity = matchRepository.findById(matchId).get();
+        if (matchEntity==null) return 0;
+        if (isHost) {
+            matchEntity.setLastMoveHostCurrInd(moveProperties[0]);
+            matchEntity.setLastMoveHostCurrType(moveProperties[1]);
+            matchEntity.setIsHostLastMoveNew(true);
+        }
+        else {
+            matchEntity.setLastMoveGuestCurrInd(moveProperties[0]);
+            matchEntity.setLastMoveGuestCurrType(moveProperties[1]);
+            matchEntity.setIsGuestLastMoveNew(true);
+        }
+        return 1;
     }
 
     @Override
-    public int leaveMatch(Long matchId, Boolean isGuest) {
-
+    public Long[] getOpponentLastMove(Long matchId, Boolean isHost) {
+        Long[] res = new Long[3];
+        res[1] = null;
+        res[2] = null;
+        MatchEntity matchEntity = matchRepository.findById(matchId).get();
+        if (matchEntity==null) {
+            res[0] = 0L;
+            return res;
+        }
+        if (isHost) {
+            if (!matchEntity.getIsGuestLastMoveNew()) {
+                res[0] = -1L;
+                return res;
+            }
+            res[1] = matchEntity.getLastMoveGuestCurrInd();
+            res[2] = matchEntity.getLastMoveGuestCurrType();
+        }
+        else {
+            if (!matchEntity.getIsHostLastMoveNew()) {
+                res[0] = -1L;
+                return res;
+            }
+            res[1] = matchEntity.getLastMoveHostCurrInd();
+            res[2] = matchEntity.getLastMoveHostCurrType();
+        }
+        return res;
     }
 
     @Override
-    public int DeleteMatch(Long matchId) {
+    public int leaveMatch(Long matchId, Boolean isHost) {
+        MatchEntity matchEntity = matchRepository.findById(matchId).get();
+        if (matchEntity==null) return 0;
+        if (isHost) {
+            matchEntity.setHost(null);
+            matchEntity.setGuest(null);
+            matchEntity.setState("FINISHED");
+        }
+        matchRepository.save(matchEntity);
+        return 1;
+    }
 
+    @Override
+    public void DeleteMatch(Long matchId) {
+        matchRepository.deleteById(matchId);
     }
 }

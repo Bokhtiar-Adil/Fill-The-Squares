@@ -12,6 +12,7 @@ public class PlayerServiceImpl implements PlayerServices {
     private final PlayerRepository playerRepository;
     
     private PlayerDto entityToDto(PlayerEntity playerEntity) {
+        if (playerEntity==null) return null;
         PlayerDto playerDto = new PlayerDto();
         playerDto.setPlayerId(playerEntity.getPlayerId());
         playerDto.setUsername(playerEntity.getUsername());
@@ -28,6 +29,11 @@ public class PlayerServiceImpl implements PlayerServices {
     @Override
     public void deletePlayer(Long playerId) {
         playerRepository.deleteById(playerId);
+    }
+
+    @Override
+    public PlayerDto findPlayer(Long playerId) {
+        return entityToDto(playerRepository.findById(playerId).get());
     }
 
     @Override

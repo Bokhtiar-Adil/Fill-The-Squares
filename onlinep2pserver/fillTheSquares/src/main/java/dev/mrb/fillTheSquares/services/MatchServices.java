@@ -13,8 +13,9 @@ public interface MatchServices {
     public int updateMatchState(Long matchId, String newState);
     public int updateConnectionStatus(Long matchId, Boolean isHost, Boolean isConnected);
     public int updateLastMove(Long matchId, Boolean isHost, Long[] moveProperties);
-    public int leaveMatch(Long matchId, Boolean isGuest);
-    public int DeleteMatch(Long matchId);
+    public Long[] getOpponentLastMove(Long matchId, Boolean isHost);
+    public int leaveMatch(Long matchId, Boolean isHost);
+    public void DeleteMatch(Long matchId);
 
 
 }
