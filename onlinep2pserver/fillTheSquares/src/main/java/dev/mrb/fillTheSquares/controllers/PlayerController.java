@@ -16,15 +16,15 @@ public class PlayerController {
     private final PlayerServices playerService;
 
     @PostMapping(path = "/add")
-    public ResponseEntity<PlayerDto> addNewPlayer(@RequestBody String username, final HttpServletRequest request) {
+    public ResponseEntity<Long> addNewPlayer(@RequestBody String username, final HttpServletRequest request) {
         PlayerDto playerDto = new PlayerDto();
         playerDto.setPlayerId(Long.valueOf(1));
         playerDto.setUsername(username);
         PlayerDto savedPlayer = playerService.createNewPlayer(playerDto);
-        return new ResponseEntity<>(savedPlayer, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedPlayer.getPlayerId(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/edit/{playerId}")
+    @PutMapping(path = "/edit")
     public ResponseEntity<String> editPlayerUsername(@RequestBody Long playerId, @RequestBody String username, final HttpServletRequest request) {
         if (playerService.findPlayer(playerId)==null)
             return new ResponseEntity<>("Invalid player id", HttpStatus.NOT_FOUND);

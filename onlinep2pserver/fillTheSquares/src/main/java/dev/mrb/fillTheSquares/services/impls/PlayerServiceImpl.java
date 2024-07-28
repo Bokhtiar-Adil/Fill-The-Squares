@@ -5,7 +5,9 @@ import dev.mrb.fillTheSquares.entities.PlayerEntity;
 import dev.mrb.fillTheSquares.repositories.PlayerRepository;
 import dev.mrb.fillTheSquares.services.PlayerServices;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class PlayerServiceImpl implements PlayerServices {
 

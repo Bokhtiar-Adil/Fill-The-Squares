@@ -83,8 +83,17 @@ public class App {
         playBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == playBtn) {
-                    mainFrame.setVisible(false);
                     // based on the selected properties, the correspoding game will open
+                    if (selectedMode==1) {
+                        int chkb = JOptionPane.YES_NO_CANCEL_OPTION;
+                        int chkr = JOptionPane.showConfirmDialog(null, "'Yes': Host a new match; 'No': Join an ongoing match", APP_NAME, chkb);
+                        boolean isHost;
+                        if (chkr==1) isHost = true;
+                        else isHost = false;
+                        OnlineP2P onlineP2P = new OnlineP2P();
+                        onlineP2P.setUpMatch(isHost);
+                    }
+                    mainFrame.setVisible(false);
                     FillTheSquares fillTheSquares = new FillTheSquares(mainFrame, modes[selectedMode], sizes[selectedSize]);
                     fillTheSquares.play();
                 }
