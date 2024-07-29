@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.security.SecureRandom;
 
 
 public class FillTheSquares {
@@ -28,8 +29,9 @@ public class FillTheSquares {
     Bot1_simple bot1;
     Bot2_advanced bot2;
     Bot3_fast bot3;
+    OnlineP2P online;
     String mode;
-    int size, menuXOffset = 10, menuYOffset = 50, descItem = 4, bdescItem = 1;
+    int size, menuXOffset = 10, menuYOffset = 50, descItem = 4, bdescItem = 2;
 
     final String APP_NAME = "FILL THE SQUARES";
     final int FRAME_WIDTH = 1000;
@@ -41,6 +43,7 @@ public class FillTheSquares {
     int[] sizes = {3,4,5,6,7,8};
     String[] sizeLbls = {"3x3", "4x4", "5x5", "6x6", "7x7", "8x8"};
     JFrame mainFrame;
+    String onlineDetails = "";
 
     public FillTheSquares(JFrame mainFrame, String mode, int n) {
         rows = n;
@@ -101,10 +104,30 @@ public class FillTheSquares {
         bot1 = new Bot1_simple(n);
         bot2 = new Bot2_advanced(n);
         bot3 = new Bot3_fast(n);
+        online = new OnlineP2P();
         this.mode = mode; // stores the game mode
         size = n; // stores the grid size
         this.mainFrame = mainFrame; // stores the frame of the home page
-    } 
+    }
+
+    public void setupOnlineProperties() {
+        
+        int chkb = JOptionPane.YES_NO_CANCEL_OPTION;
+        int chkr = JOptionPane.showConfirmDialog(null, "'Yes': Host a new match; 'No': Join an ongoing match", APP_NAME, chkb);
+        boolean isHost;
+        String username = generateRandomString();
+        if (chkr==1) {
+            isHost = true; 
+            onlineDetails = "You are host | "; 
+        }
+        else {
+            isHost = false; 
+            onlineDetails = "You are guest | ";
+        }
+        onlineDetails += ("Username: " + username);
+        online.setUpMatch(username, isHost, Long.valueOf(size));
+    }
+
 
     // when the game window is opened, this fucntion is called
     public void play() {
@@ -112,6 +135,18 @@ public class FillTheSquares {
         updateScore();
         updateTurnIndicator();
         frameSetup();
+    }
+
+    private String generateRandomString() {
+        final int length = 5;
+        final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
+        final SecureRandom RANDOM = new SecureRandom();
+        StringBuilder result = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = RANDOM.nextInt(CHARACTERS.length());
+            result.append(CHARACTERS.charAt(index));
+        }
+        return result.toString();
     }
     
     // after making all the changes in different parts of the window, this function adds the contents to the frame
@@ -340,7 +375,8 @@ public class FillTheSquares {
         // this loop writes the text above the grid
         for (int i=0; i<bdescItem; i++) {
             int t = rows*columns, t2 = player1+player2, t3 = t-t2;;
-            if (i==0) bdescs[i].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
+            if (i==0) bdescs[i].setText(onlineDetails);
+            if (i==1) bdescs[i].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
             bdescs[i].setFont(new Font("Calibri", 0, 20));
             bdescs[i].setBounds(173, 20, 305, 100);
             bdescs[i].setForeground(Color.WHITE);
@@ -572,7 +608,7 @@ public class FillTheSquares {
         scoreboard.setBounds(menuXOffset, menuYOffset, 350, 100);
         scoreboard.setVisible(true);
         int t = rows*columns, t2 = player1+player2, t3 = t-t2;;
-        bdescs[0].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
+        bdescs[1].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
         frameSetup();
     }
 
