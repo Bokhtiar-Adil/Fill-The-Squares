@@ -40,6 +40,16 @@ public class MatchController {
         return new ResponseEntity<>("Joined", HttpStatus.OK);
     }
 
+    @GetMapping(path = "/getOpponentUsername")
+    public ResponseEntity<String> getOpponentUsername(@RequestBody Long matchId, @RequestBody Long playerId, @RequestBody Boolean isHost, final HttpServletRequest request) {
+        if (!matchServices.matchIdValidity(matchId)) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (playerServices.findPlayer(playerId)==null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        Long[] hostGuest = matchServices.findMatchHostAndGuest(matchId);
+        String username;
+        if (isHost) username = playerServices.findPlayer(hostGuest[1]).getUsername();
+        else username = playerServices.findPlayer(hostGuest[0]).getUsername();
+        return new ResponseEntity<>(username, HttpStatus.OK);
+    }
     @GetMapping(path = "/getOppLastMove")
     public ResponseEntity<Long[]> getOpponentLastMove(@RequestBody Long matchId, @RequestBody Long playerId, @RequestBody Boolean isHost, final HttpServletRequest request) {
         if (!matchServices.matchIdValidity(matchId)) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

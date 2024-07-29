@@ -6,30 +6,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 
+
 public class OnlineP2P {
 
     Long playerId, matchId, size;
     Boolean isHost, matchFound;
-    String matchState;
+    String matchState, opponent;
     HttpURLConnection connection = null;
     BufferedReader reader = null;
     DataOutputStream outputStream = null;
 
-    String addNewPlayerURL = "http://localhost:8090/players/add";
-    String editPlayerUsernameURL = "http://localhost:8090/edit";
-    String hostNewMatchURL = "http://localhost:8090/match/start";
-    String findMatchURL = "http://localhost:8090/match/find";
-    String joinMatchURL = "http://localhost:8090/match/join";
-    String getOpponentLastMoveURL = "http://localhost:8090/match/getOppLastMove";
-    String updateLastMoveURL = "http://localhost:8090/match/updateLastMove";
-    String leaveMatchURL = "http://localhost:8090/match/leave";
-    String deleteMatchURL = "http://localhost:8090/match/delete";
+    final String addNewPlayerURL = "http://localhost:8090/players/add";
+    final String editPlayerUsernameURL = "http://localhost:8090/edit";
+    final String hostNewMatchURL = "http://localhost:8090/match/start";
+    final String findMatchURL = "http://localhost:8090/match/find";
+    final String joinMatchURL = "http://localhost:8090/match/join";
+    final String getOpponentUsername = "http://localhost:8090/match/getOpponentUsername";
+    final String getOpponentLastMoveURL = "http://localhost:8090/match/getOppLastMove";
+    final String updateLastMoveURL = "http://localhost:8090/match/updateLastMove";
+    final String leaveMatchURL = "http://localhost:8090/match/leave";
+    final String deleteMatchURL = "http://localhost:8090/match/delete";
 
     public OnlineP2P() {
         
     }
 
-    public void setUpMatch(String username, boolean isHost, Long size) {
+    public int setUpMatch(String username, boolean isHost, Long size) {
         this.size = size;
         playerId = getPlayerId(username);
         // System.out.println(playerId);
@@ -37,23 +39,10 @@ public class OnlineP2P {
         else {
             matchId = findAvailableMatch();
             if (matchFound) joinAsGuest();
-            else {
-
-            } 
-
+            else return -1;
         }
-    }
-
-    private String generateRandomString() {
-        final int length = 5;
-        final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
-        final SecureRandom RANDOM = new SecureRandom();
-        StringBuilder result = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            int index = RANDOM.nextInt(CHARACTERS.length());
-            result.append(CHARACTERS.charAt(index));
-        }
-        return result.toString();
+        opponent = getOpponentUsername();
+        return 0;
     }
 
     private void setupConnection(String urlString, String method, String requestBody) throws Exception {
@@ -185,6 +174,27 @@ public class OnlineP2P {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String getOpponentUsername() {
+        String name = null;
+        String requestBody = "{\"matchId\":\"" + matchId + "\", \"playerId\":\"" + playerId + "\", \"isHost\":\"" + isHost + "\"}";
+        try {
+            setupConnection(findMatchURL, "GET", requestBody);
+            StringBuilder response = getResponse(302, new int[]{}, new String[]{"findAvailableMatch"});
+            if (response != null) name = response.toString();
+            else throw new Exception();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) reader.close();
+                if (connection != null) connection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return name;
     }
 
     private String getMatchState() {

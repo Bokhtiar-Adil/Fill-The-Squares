@@ -116,18 +116,19 @@ public class FillTheSquares {
         int chkr = JOptionPane.showConfirmDialog(null, "'Yes': Host a new match; 'No': Join an ongoing match", APP_NAME, chkb);
         boolean isHost;
         String username = generateRandomString();
-        if (chkr==1) {
-            isHost = true; 
-            onlineDetails = "You are host | "; 
+        if (chkr==1) isHost = true; 
+        else isHost = false;
+        int ff = online.setUpMatch(username, isHost, Long.valueOf(size)); // gotta fix custom/random size value issue
+        if (ff==-1) {
+            chkb = JOptionPane.INFORMATION_MESSAGE;
+            JOptionPane.showConfirmDialog(null, "No match is available right now, so you will host a new match.", APP_NAME, chkb);
+            isHost = true;
+            ff = online.setUpMatch(username, isHost, Long.valueOf(size));
         }
-        else {
-            isHost = false; 
-            onlineDetails = "You are guest | ";
-        }
-        onlineDetails += ("Username: " + username);
-        online.setUpMatch(username, isHost, Long.valueOf(size));
+        if (isHost) onlineDetails = "You (host): " + username + " | guest: "; 
+        else onlineDetails = "You (guest): " + username + " | host: "; 
+        onlineDetails += online.opponent;
     }
-
 
     // when the game window is opened, this fucntion is called
     public void play() {
