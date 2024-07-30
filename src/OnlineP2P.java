@@ -21,7 +21,8 @@ public class OnlineP2P {
     final String hostNewMatchURL = "http://localhost:8090/match/start";
     final String findMatchURL = "http://localhost:8090/match/find";
     final String joinMatchURL = "http://localhost:8090/match/join";
-    final String getOpponentUsername = "http://localhost:8090/match/getOpponentUsername";
+    final String getOpponentUsernameURL = "http://localhost:8090/match/getOpponentUsername";
+    final String isOppLastMoveUpdatedURL = "http://localhost:8090/match/isOppLastMoveUpdated";
     final String getOpponentLastMoveURL = "http://localhost:8090/match/getOppLastMove";
     final String updateLastMoveURL = "http://localhost:8090/match/updateLastMove";
     final String leaveMatchURL = "http://localhost:8090/match/leave";
@@ -162,7 +163,7 @@ public class OnlineP2P {
         String requestBody = "{\"matchId\":\"" + matchId + "\", \"playerId\":\"" + playerId + "\", \"size\":\"" + size + "\"}";
         try {
             setupConnection(joinMatchURL, "PUT", requestBody);
-            getResponse(200, new int[]{404}, new String[]{"joinAsGuest"});
+            getResponse(200, new int[]{404}, new String[]{"Not found", "joinAsGuest"});
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,7 +181,7 @@ public class OnlineP2P {
         String name = null;
         String requestBody = "{\"matchId\":\"" + matchId + "\", \"playerId\":\"" + playerId + "\", \"isHost\":\"" + isHost + "\"}";
         try {
-            setupConnection(findMatchURL, "GET", requestBody);
+            setupConnection(getOpponentUsernameURL, "GET", requestBody);
             StringBuilder response = getResponse(302, new int[]{}, new String[]{"findAvailableMatch"});
             if (response != null) name = response.toString();
             else throw new Exception();
@@ -205,10 +206,48 @@ public class OnlineP2P {
 
     }
 
-    private void updateMove(int[] moveProps) {
+    public void updateMove(int[] moveProps) {
+        String requestBody = "{\"matchId\":\"" + matchId + "\", \"playerId\":\"" + playerId + "\", \"isHost\":\"" + isHost + "\", \"currInd:\"" + moveProps[0] + "\", \"currType:\"" + moveProps[1] + "\"}";
+        try {
+            setupConnection(updateLastMoveURL, "PUT", requestBody);
+            StringBuilder response = getResponse(202, new int[]{404}, new String[]{"Not found", "updateMove"});
+            if (response == null) throw new Exception();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) reader.close();
+                if (connection != null) connection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
-    private int[] getOpponentMove() {
+
+    public boolean isOpponentLastMoveUpdated() {
+        boolean isUpdated = false;
+        String requestBody = "{\"matchId\":\"" + matchId + "\", \"playerId\":\"" + playerId + "\", \"isHost\":\"" + isHost + "\"}";
+        try {
+            setupConnection(isOppLastMoveUpdatedURL, "GET", requestBody);
+            StringBuilder response = getResponse(200, new int[]{404}, new String[]{"Not found", "isOpponentLastMoveUpdated"});
+            if (response != null) isUpdated = Boolean.getBoolean(response.toString());
+            else throw new Exception();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) reader.close();
+                if (connection != null) connection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return isUpdated;
+    }
+
+    public int[] getOpponentMove() {
         int[] moveProps = new int[2];
         return moveProps;
     }

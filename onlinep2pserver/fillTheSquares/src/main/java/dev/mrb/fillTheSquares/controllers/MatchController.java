@@ -50,6 +50,13 @@ public class MatchController {
         else username = playerServices.findPlayer(hostGuest[0]).getUsername();
         return new ResponseEntity<>(username, HttpStatus.OK);
     }
+
+    @GetMapping(path = "/isOppLastMoveUpdated")
+    public ResponseEntity<Boolean> isOpponentLastMoveUpdated(@RequestBody Long matchId, @RequestBody Long playerId, @RequestBody Boolean isHost, final HttpServletRequest request) {
+        if (!matchServices.matchIdValidity(matchId)) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (playerServices.findPlayer(playerId)==null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(matchServices.isOpponentLastMoveUpdated(matchId, isHost), HttpStatus.OK);
+    }
     @GetMapping(path = "/getOppLastMove")
     public ResponseEntity<Long[]> getOpponentLastMove(@RequestBody Long matchId, @RequestBody Long playerId, @RequestBody Boolean isHost, final HttpServletRequest request) {
         if (!matchServices.matchIdValidity(matchId)) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -60,13 +67,13 @@ public class MatchController {
     }
 
     @PutMapping(path = "/updateLastMove")
-    public ResponseEntity<String> updateLastMove(@RequestBody Long matchId, @RequestBody Long playerId, @RequestBody Boolean isHost, @RequestBody Long[] moveProps, final HttpServletRequest request) {
+    public ResponseEntity<String> updateLastMove(@RequestBody Long matchId, @RequestBody Long playerId, @RequestBody Boolean isHost, @RequestBody Long currInd, @RequestBody Long currType, final HttpServletRequest request) {
         if (!matchServices.matchIdValidity(matchId)) return new ResponseEntity<>("Invalid match id", HttpStatus.NOT_FOUND);
         if (playerServices.findPlayer(playerId)==null) return new ResponseEntity<>("Invalid player id", HttpStatus.NOT_FOUND);
         Long[] hostGuest = matchServices.findMatchHostAndGuest(matchId);
         if (isHost && hostGuest[0]!=playerId) return new ResponseEntity<>("Invalid host id", HttpStatus.NOT_ACCEPTABLE);
         if (!isHost && hostGuest[1]!=playerId) return new ResponseEntity<>("Invalid guest id", HttpStatus.NOT_ACCEPTABLE);
-        int ff = matchServices.updateLastMove(matchId, isHost, moveProps);
+        int ff = matchServices.updateLastMove(matchId, isHost, new Long[]{currInd, currType});
         return new ResponseEntity<>("Updated", HttpStatus.ACCEPTED);
     }
 

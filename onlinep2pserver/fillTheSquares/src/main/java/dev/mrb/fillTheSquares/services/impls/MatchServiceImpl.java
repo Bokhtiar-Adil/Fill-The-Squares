@@ -118,7 +118,12 @@ public class MatchServiceImpl implements MatchServices {
         }
         return 1;
     }
-
+    @Override
+    public Boolean isOpponentLastMoveUpdated(Long matchId, Boolean isHost) {
+        MatchEntity matchEntity = matchRepository.findById(matchId).get();
+        if (isHost) return matchEntity.getIsGuestLastMoveNew();
+        else return matchEntity.getIsHostLastMoveNew();
+    }
     @Override
     public Long[] getOpponentLastMove(Long matchId, Boolean isHost) {
         Long[] res = new Long[3];
@@ -132,6 +137,7 @@ public class MatchServiceImpl implements MatchServices {
             }
             res[1] = matchEntity.getLastMoveGuestCurrInd();
             res[2] = matchEntity.getLastMoveGuestCurrType();
+            matchEntity.setIsGuestLastMoveNew(false);
         }
         else {
             if (!matchEntity.getIsHostLastMoveNew()) {
@@ -140,7 +146,9 @@ public class MatchServiceImpl implements MatchServices {
             }
             res[1] = matchEntity.getLastMoveHostCurrInd();
             res[2] = matchEntity.getLastMoveHostCurrType();
+            matchEntity.setIsHostLastMoveNew(false);
         }
+        matchRepository.save(matchEntity);
         return res;
     }
 

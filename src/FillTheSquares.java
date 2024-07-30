@@ -91,6 +91,9 @@ public class FillTheSquares {
             vddBtns[i] = new JButton();
             vbtnColors[i] = 'x';
         }
+        this.mode = mode; // stores the game mode
+        size = n; // stores the grid size
+        this.mainFrame = mainFrame; // stores the frame of the home page
         turn = true; // to indicate whose turn it is
         finished = false; // to indicate whether the game has reached a finishing condition
         normal = Color.LIGHT_GRAY; // when a line is not selected, this color will be displayed
@@ -105,9 +108,6 @@ public class FillTheSquares {
         bot2 = new Bot2_advanced(n);
         bot3 = new Bot3_fast(n);
         online = new OnlineP2P();
-        this.mode = mode; // stores the game mode
-        size = n; // stores the grid size
-        this.mainFrame = mainFrame; // stores the frame of the home page
     }
 
     public void setupOnlineProperties() {
@@ -116,7 +116,7 @@ public class FillTheSquares {
         int chkr = JOptionPane.showConfirmDialog(null, "'Yes': Host a new match; 'No': Join an ongoing match", APP_NAME, chkb);
         boolean isHost;
         String username = generateRandomString();
-        if (chkr==1) isHost = true; 
+        if (chkr==0) isHost = true; 
         else isHost = false;
         int ff = online.setUpMatch(username, isHost, Long.valueOf(size)); // gotta fix custom/random size value issue
         if (ff==-1) {
@@ -128,6 +128,8 @@ public class FillTheSquares {
         if (isHost) onlineDetails = "You (host): " + username + " | guest: "; 
         else onlineDetails = "You (guest): " + username + " | host: "; 
         onlineDetails += online.opponent;
+        if (isHost) turn = true;
+        else turn = false;
     }
 
     // when the game window is opened, this fucntion is called
@@ -379,7 +381,7 @@ public class FillTheSquares {
             if (i==0) bdescs[i].setText(onlineDetails);
             if (i==1) bdescs[i].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
             bdescs[i].setFont(new Font("Calibri", 0, 20));
-            bdescs[i].setBounds(173, 20, 305, 100);
+            bdescs[i].setBounds(173, 20+i*30, 305, 100);
             bdescs[i].setForeground(Color.WHITE);
             bdescs[i].setVisible(true);
         }
@@ -594,6 +596,10 @@ public class FillTheSquares {
                 botManager();
                 frameSetup();
             } 
+            else if (mode=="onlineP2p" && !turn) {
+                online.updateMove(new int[]{currInd, currType});
+                onlineOpponentManager();
+            }
         }
     }
 
@@ -666,5 +672,25 @@ public class FillTheSquares {
         }
         
         scoring(srows[botMove[1]][botMove[0]], scols[botMove[1]][botMove[0]], botMove[1], botMove[0]);        
+    }
+
+    private void onlineOpponentManager() {
+        int[] oppMove = new int[2];
+        while (true) {
+            if (online.isOpponentLastMoveUpdated()) {
+                oppMove = online.getOpponentMove();
+                break;
+            }
+        }
+        // if (isHost) 
+        if (oppMove[1]==0) {
+            hbtnColors[oppMove[0]] = 'r';
+            hddBtns[oppMove[0]].setBackground(p2Filled);
+        }
+        else {
+            vbtnColors[oppMove[0]] = 'r';
+            vddBtns[oppMove[0]].setBackground(p2Filled);
+        }
+        scoring(srows[oppMove[1]][oppMove[0]], scols[oppMove[1]][oppMove[0]], oppMove[1], oppMove[0]);
     }
 }
