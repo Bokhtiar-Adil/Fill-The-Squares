@@ -17,10 +17,12 @@ public class PlayerController {
 
     @PostMapping(path = "/add")
     public ResponseEntity<Long> addNewPlayer(@RequestBody String username, final HttpServletRequest request) {
+        System.out.println("U: " + username);
         PlayerDto playerDto = new PlayerDto();
         playerDto.setPlayerId(Long.valueOf(1));
         playerDto.setUsername(username);
         PlayerDto savedPlayer = playerService.createNewPlayer(playerDto);
+        System.out.println("U: " + username);
         return new ResponseEntity<>(savedPlayer.getPlayerId(), HttpStatus.OK);
     }
 

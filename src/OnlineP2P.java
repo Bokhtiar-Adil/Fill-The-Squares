@@ -63,6 +63,7 @@ public class OnlineP2P {
     private StringBuilder getResponse(int successCode, int[] failedCodes, String[] failedMessages) throws Exception {
         StringBuilder response = new StringBuilder();
         if (connection.getResponseCode() == successCode) {
+            System.out.println("here");
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String responseLine;
             while ((responseLine = reader.readLine()) != null) {
@@ -88,7 +89,10 @@ public class OnlineP2P {
         try {
             setupConnection(addNewPlayerURL, "POST", requestBody);            
             StringBuilder response = getResponse(200, new int[]{}, new String[]{"getPlayerId"});
-            if (response!=null) id = Long.parseLong(response.toString().trim());
+            if (response!=null) {
+                id = Long.parseLong(response.toString().trim());
+                System.out.println("Pid: " + id);
+            }
             else throw new Exception();
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,15 +110,21 @@ public class OnlineP2P {
 
     private Long hostMatch() {
         Long id = null;
-        String requestBody = "{\"hostId\":\"" + playerId + "\", \"size\":\"" + size + "\"}";
+        // Long sizeL = Long.valueOf(0)
+        String requestBody = "{\"hostId\": " + Long.valueOf(33) + ", \"size\": " + Long.valueOf(size) + "}";
+        System.out.println(requestBody);
         try {
             setupConnection(hostNewMatchURL, "POST", requestBody);
-            StringBuilder response = getResponse(200, new int[]{404, 501}, new String[]{"invalid playerID", "invalid size", "hostNewMatch"});
+            StringBuilder response = getResponse(201, new int[]{404, 501}, new String[]{"invalid playerID", "invalid size", "hostNewMatch"});
             if (response!=null) {
                 id = Long.parseLong(response.toString().trim()); 
                 matchFound = true;
+                System.out.println(id);
             }
-            else throw new Exception();
+            else {
+                System.out.println("NULL response");
+                throw new Exception();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

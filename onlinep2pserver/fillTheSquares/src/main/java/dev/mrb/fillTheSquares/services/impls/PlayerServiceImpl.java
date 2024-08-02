@@ -25,6 +25,7 @@ public class PlayerServiceImpl implements PlayerServices {
         PlayerEntity playerEntity = new PlayerEntity();
         playerEntity.setUsername(playerDto.getUsername());
         PlayerEntity savedEntity = playerRepository.save(playerEntity);
+        System.out.println(savedEntity.getPlayerId());
         return entityToDto(savedEntity);
     }
 

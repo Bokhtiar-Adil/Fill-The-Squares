@@ -19,9 +19,10 @@ public class MatchController {
 
     @PostMapping(path = "/start")
     public ResponseEntity<Long> hostNewMatch(@RequestBody Long hostId, @RequestBody Long size, final HttpServletRequest request) {
-        if (size<3 || size>8) return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
+        System.out.println("H: " + hostId + " S: " + size);
+        if (size<3 || size>8) return new ResponseEntity<>(-1L, HttpStatus.NOT_IMPLEMENTED);
         Long matchId = matchServices.createMatch(hostId, size);
-        if (matchId==null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (matchId==null) return new ResponseEntity<>(-2L, HttpStatus.NOT_FOUND);
         else return new ResponseEntity<>(matchId, HttpStatus.CREATED);
     }
 

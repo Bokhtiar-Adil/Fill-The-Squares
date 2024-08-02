@@ -379,9 +379,9 @@ public class FillTheSquares {
         for (int i=0; i<bdescItem; i++) {
             int t = rows*columns, t2 = player1+player2, t3 = t-t2;;
             if (i==0) bdescs[i].setText(onlineDetails);
-            if (i==1) bdescs[i].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
+            if (i==1) bdescs[i].setText(">> Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
             bdescs[i].setFont(new Font("Calibri", 0, 20));
-            bdescs[i].setBounds(173, 20+i*30, 305, 100);
+            bdescs[i].setBounds(10, 20+i*30, 400, 100);
             bdescs[i].setForeground(Color.WHITE);
             bdescs[i].setVisible(true);
         }
@@ -615,7 +615,7 @@ public class FillTheSquares {
         scoreboard.setBounds(menuXOffset, menuYOffset, 350, 100);
         scoreboard.setVisible(true);
         int t = rows*columns, t2 = player1+player2, t3 = t-t2;;
-        bdescs[1].setText("Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
+        bdescs[1].setText(">> Total squares: " + t + " | Filled: " + t2 + " | Left: " + t3);
         frameSetup();
     }
 
